@@ -1,0 +1,8 @@
+{
+    "debug": "true",
+    "db": {
+        "driver": "sqlite3",
+        "port": "8080",
+        "dsn": "./db/go_scholarship.db"
+    }
+}

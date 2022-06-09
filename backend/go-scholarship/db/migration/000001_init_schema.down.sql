@@ -1,0 +1,4 @@
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS scholarships;
+DROP TABLE IF EXISTS users;
