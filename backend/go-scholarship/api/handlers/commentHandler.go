@@ -11,6 +11,7 @@ type commentHandler struct {
 	commentRepo models.CommentRepository
 }
 
+// routes
 func NewCommentHandler(r *gin.Engine, commentRepo models.CommentRepository) {
 	handler := commentHandler{commentRepo}
 
