@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 
 	"go-scholarship/api/models"
@@ -39,10 +40,10 @@ func (db *categoryConn) Fetch() ([]models.Category, error) {
 }
 
 // fetchById category
-func (db *categoryConn) FetchById(id int64) (models.Category, error) {
+func (db *categoryConn) FetchById(ctx context.Context, id int64) (models.Category, error) {
 	query := `SELECT * FROM categories WHERE id = ?`
 
-	row := db.conn.QueryRow(query, id)
+	row := db.conn.QueryRowContext(ctx, query, id)
 
 	var c models.Category
 
@@ -58,4 +59,3 @@ func (db *categoryConn) FetchById(id int64) (models.Category, error) {
 // TODO: Update
 
 // TODO: Delete
-

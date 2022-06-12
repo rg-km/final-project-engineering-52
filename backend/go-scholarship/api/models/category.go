@@ -1,5 +1,7 @@
 package models
 
+import "context"
+
 type Category struct {
 	ID           int    `json:"id" from:"id"`
 	CategoryName string `json:"category_name" from:"category_name" binding:"required"`
@@ -8,7 +10,5 @@ type Category struct {
 
 type CategoryRepository interface {
 	Fetch() ([]Category, error)
-	FetchById(id int64) (Category, error)
+	FetchById(ctx context.Context, id int64) (Category, error)
 }
-
-type CategoryUseCase interface {}

@@ -19,7 +19,6 @@ func NewCategoryHandler(r *gin.Engine, categoryRepo models.CategoryRepository) {
 
 	r.GET("/api/categories", handler.Fetch)
 	// TODO: define routes
-	
 }
 
 // fetch all categories
@@ -38,10 +37,11 @@ func (repo *categoryHandler) Fetch(c *gin.Context) {
 
 // fetch by id category
 func (repo *categoryHandler) FetchById(c *gin.Context) {
+	ctx := c.Request.Context()
 	id := c.Param("id")
 	idConv, _ := strconv.Atoi(id)
 
-	category, err := repo.categoryRepo.FetchById(int64(idConv))
+	category, err := repo.categoryRepo.FetchById(ctx, int64(idConv))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.InternalServer,
@@ -50,7 +50,7 @@ func (repo *categoryHandler) FetchById(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, category)
+	c.JSON(http.StatusOK, category)
 }
 
 // TODO: Create
