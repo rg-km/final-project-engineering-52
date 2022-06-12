@@ -5,11 +5,12 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"go-scholarship/api/handlers/middleware"
 	"go-scholarship/api/models"
 	"go-scholarship/utils/token"
+
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type userHandler struct {
@@ -26,16 +27,16 @@ func NewUserHandler(r *gin.Engine, userRepo models.UserRepository) {
 	auth := r.Group("/api")
 	auth.Use(middleware.JWTMiddleware())
 	{
-		auth.GET("/users", handler.Fetch)
-		auth.GET("/users/:id", handler.FetchById)
-		auth.POST("/users", handler.Create)
-		auth.PUT("/users/:id", handler.Update)
-		auth.DELETE("/users/:id", handler.Delete) 
+		auth.GET("/users", handler.fetch)
+		auth.GET("/users/:id", handler.fetchById)
+		auth.POST("/users", handler.create)
+		auth.PUT("/users/:id", handler.update)
+		auth.DELETE("/users/:id", handler.delete)
 	}
 
 	// should be public routes
-	r.POST("/login", handler.Login)
-	r.POST("/register", handler.Register)
+	r.POST("/login", handler.login)
+	r.POST("/register", handler.register)
 }
 
 func errMessage(v validator.FieldError) string {
@@ -45,7 +46,8 @@ func errMessage(v validator.FieldError) string {
 }
 
 // login
-func (u *userHandler) Login(c *gin.Context) {
+func (u *userHandler) login(c *gin.Context) {
+	ctx := c.Request.Context()
 	var login models.Login
 
 	if err := c.ShouldBind(&login); err != nil {
@@ -60,7 +62,7 @@ func (u *userHandler) Login(c *gin.Context) {
 		}
 	}
 
-	userLogin, err := u.userRepo.Login(&login)
+	userLogin, err := u.userRepo.Login(ctx, &login)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.InternalServer,
@@ -85,7 +87,8 @@ func (u *userHandler) Login(c *gin.Context) {
 }
 
 // register
-func (u *userHandler) Register(c *gin.Context) {
+func (u *userHandler) register(c *gin.Context) {
+	ctx := c.Request.Context()
 	var user models.User
 
 	if err := c.ShouldBind(&user); err != nil {
@@ -100,7 +103,7 @@ func (u *userHandler) Register(c *gin.Context) {
 		}
 	}
 
-	userData, err := u.userRepo.Register(&user)
+	userData, err := u.userRepo.Register(ctx, &user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.InternalServer,
@@ -115,8 +118,9 @@ func (u *userHandler) Register(c *gin.Context) {
 }
 
 // fetch users
-func (u *userHandler) Fetch(c *gin.Context) {
-	users, err := u.userRepo.Fetch()
+func (u *userHandler) fetch(c *gin.Context) {
+	ctx := c.Request.Context()
+	users, err := u.userRepo.Fetch(ctx)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.InternalServer,
@@ -132,7 +136,8 @@ func (u *userHandler) Fetch(c *gin.Context) {
 }
 
 // fetch user by id
-func (u *userHandler) FetchById(c *gin.Context) {
+func (u *userHandler) fetchById(c *gin.Context) {
+	ctx := c.Request.Context()
 	id := c.Param("id")
 	idConv, err := strconv.Atoi(id)
 	if err != nil {
@@ -142,7 +147,7 @@ func (u *userHandler) FetchById(c *gin.Context) {
 		return
 	}
 
-	user, err := u.userRepo.FetchById(int64(idConv))
+	user, err := u.userRepo.FetchById(ctx, int64(idConv))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.InternalServer,
@@ -157,7 +162,8 @@ func (u *userHandler) FetchById(c *gin.Context) {
 }
 
 // create user
-func (u *userHandler) Create(c *gin.Context) {
+func (u *userHandler) create(c *gin.Context) {
+	ctx := c.Request.Context()
 	var user models.User
 
 	if err := c.ShouldBind(&user); err != nil {
@@ -172,7 +178,7 @@ func (u *userHandler) Create(c *gin.Context) {
 		}
 	}
 
-	userData, err := u.userRepo.Create(&user)
+	userData, err := u.userRepo.Create(ctx, &user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.InternalServer,
@@ -187,7 +193,8 @@ func (u *userHandler) Create(c *gin.Context) {
 }
 
 // update user
-func (u *userHandler) Update(c *gin.Context) {
+func (u *userHandler) update(c *gin.Context) {
+	ctx := c.Request.Context()
 	id := c.Param("id")
 	idConv, err := strconv.Atoi(id)
 	if err != nil {
@@ -211,7 +218,7 @@ func (u *userHandler) Update(c *gin.Context) {
 		}
 	}
 
-	userData, err := u.userRepo.Update(int64(idConv), &user)
+	userData, err := u.userRepo.Update(ctx, int64(idConv), &user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.InternalServer,
@@ -226,7 +233,8 @@ func (u *userHandler) Update(c *gin.Context) {
 }
 
 // delete user
-func (u *userHandler) Delete(c *gin.Context) {
+func (u *userHandler) delete(c *gin.Context) {
+	ctx := c.Request.Context()
 	id := c.Param("id")
 
 	idConv, err := strconv.Atoi(id)
@@ -237,7 +245,7 @@ func (u *userHandler) Delete(c *gin.Context) {
 		return
 	}
 
-	if err := u.userRepo.Delete(int64(idConv)); err != nil {
+	if err := u.userRepo.Delete(ctx, int64(idConv)); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.InternalServer,
 		})
