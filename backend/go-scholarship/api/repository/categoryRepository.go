@@ -16,10 +16,10 @@ func NewCategoryRepository(db *sql.DB) models.CategoryRepository {
 }
 
 // fetch categories
-func (db *categoryConn) Fetch() ([]models.Category, error) {
+func (db *categoryConn) Fetch(ctx context.Context) ([]models.Category, error) {
 	query := `SELECT * FROM categories`
 
-	rows, err := db.conn.Query(query)
+	rows, err := db.conn.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
 	}

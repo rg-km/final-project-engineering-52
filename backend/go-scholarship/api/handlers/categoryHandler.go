@@ -17,13 +17,14 @@ type categoryHandler struct {
 func NewCategoryHandler(r *gin.Engine, categoryRepo models.CategoryRepository) {
 	handler := categoryHandler{categoryRepo}
 
-	r.GET("/api/categories", handler.Fetch)
+	r.GET("/api/categories", handler.fetch)
 	// TODO: define routes
 }
 
 // fetch all categories
-func (repo *categoryHandler) Fetch(c *gin.Context) {
-	categories, err := repo.categoryRepo.Fetch()
+func (repo *categoryHandler) fetch(c *gin.Context) {
+	ctx := c.Request.Context()
+	categories, err := repo.categoryRepo.Fetch(ctx)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.InternalServer,
@@ -32,7 +33,7 @@ func (repo *categoryHandler) Fetch(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, categories)
+	c.JSON(http.StatusOK, categories)
 }
 
 // fetch by id category
