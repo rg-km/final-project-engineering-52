@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 
 	"go-scholarship/api/models"
@@ -14,6 +15,7 @@ func NewCategoryRepository(db *sql.DB) models.CategoryRepository {
 	return &categoryConn{db}
 }
 
+// fetch categories
 func (db *categoryConn) Fetch() ([]models.Category, error) {
 	query := `SELECT * FROM categories`
 
@@ -37,11 +39,23 @@ func (db *categoryConn) Fetch() ([]models.Category, error) {
 	return cs, nil
 }
 
-// TODO: FetchById
+// fetchById category
+func (db *categoryConn) FetchById(ctx context.Context, id int64) (models.Category, error) {
+	query := `SELECT * FROM categories WHERE id = ?`
+
+	row := db.conn.QueryRowContext(ctx, query, id)
+
+	var c models.Category
+
+	if err := row.Scan(&c.ID, &c.CategoryName, &c.CreatedAt); err != nil {
+		return c, err
+	}
+
+	return c, nil
+}
 
 // TODO: Create
 
 // TODO: Update
 
 // TODO: Delete
-
