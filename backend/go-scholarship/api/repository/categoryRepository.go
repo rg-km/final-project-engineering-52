@@ -16,10 +16,10 @@ func NewCategoryRepository(db *sql.DB) models.CategoryRepository {
 }
 
 // fetch categories
-func (db *categoryConn) Fetch() ([]models.Category, error) {
+func (db *categoryConn) Fetch(ctx context.Context) ([]models.Category, error) {
 	query := `SELECT * FROM categories`
 
-	rows, err := db.conn.Query(query)
+	rows, err := db.conn.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,24 @@ func (db *categoryConn) FetchById(ctx context.Context, id int64) (models.Categor
 	return c, nil
 }
 
-// TODO: Create
+// create category
+func (ca *categoryConn) Create(ctx context.Context, c *models.Category) (models.Category, error) {
+	query := `INSERT INTO categories (category_name) VALUES(?)`
+
+	row, err := ca.conn.ExecContext(ctx, query, &c.CategoryName)
+	if err != nil {
+		return *c, err
+	}
+
+	lastId, _ := row.LastInsertId()
+
+	res, err := ca.FetchById(ctx, lastId)
+	if err != nil {
+		return *c, err
+	}
+
+	return res, nil
+}
 
 // TODO: Update
 

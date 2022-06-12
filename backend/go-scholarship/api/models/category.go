@@ -9,6 +9,7 @@ type Category struct {
 }
 
 type CategoryRepository interface {
-	Fetch() ([]Category, error)
+	Fetch(ctx context.Context) ([]Category, error)
 	FetchById(ctx context.Context, id int64) (Category, error)
+	Create(ctx context.Context, c *Category) (Category, error)
 }
