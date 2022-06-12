@@ -8,7 +8,7 @@ type Category struct {
 
 type CategoryRepository interface {
 	Fetch() ([]Category, error)
-	
+	FetchById(id int64) (Category, error)
 }
 
 type CategoryUseCase interface {}
