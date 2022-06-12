@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 
 	"go-scholarship/api/models"
@@ -16,7 +17,7 @@ func NewUserRepo(conn *sql.DB) models.UserRepository {
 }
 
 // fetch user by email
-func (repo *userConn) fetchUserByEmail(email string) (models.User, error) {
+func (repo *userConn) fetchUserByEmail(ctx context.Context, email string) (models.User, error) {
 	var u models.User
 	sqlStmt := `SELECT * FROM users WHERE email = ?`
 	row := repo.conn.QueryRow(sqlStmt, email)
@@ -29,8 +30,8 @@ func (repo *userConn) fetchUserByEmail(email string) (models.User, error) {
 }
 
 // login
-func (repo *userConn) Login(l *models.Login) (models.User, error) {
-	u, err := repo.fetchUserByEmail(l.Email)
+func (repo *userConn) Login(ctx context.Context, l *models.Login) (models.User, error) {
+	u, err := repo.fetchUserByEmail(ctx, l.Email)
 	if err != nil {
 		return u, err
 	}
@@ -44,16 +45,16 @@ func (repo *userConn) Login(l *models.Login) (models.User, error) {
 }
 
 // register
-func (repo *userConn) Register(u *models.User) (models.User, error) {
+func (repo *userConn) Register(ctx context.Context, u *models.User) (models.User, error) {
 	// check if email already exists
-	if _, err := repo.fetchUserByEmail(u.Email); err == nil {
+	if _, err := repo.fetchUserByEmail(ctx, u.Email); err == nil {
 		return models.User{}, err
 	}
 
 	// hash password
 	u.Password, _ = hash.HashPassword(u.Password)
 
-	res, err := repo.Create(u)
+	res, err := repo.Create(ctx, u)
 	if err != nil {
 		return models.User{}, err
 	}
@@ -64,10 +65,10 @@ func (repo *userConn) Register(u *models.User) (models.User, error) {
 // TODO: logout
 
 // fetch users
-func (repo *userConn) Fetch() ([]models.User, error) {
+func (repo *userConn) Fetch(ctx context.Context) ([]models.User, error) {
 	var us []models.User
 	query := `SELECT * FROM users`
-	rows, err := repo.conn.Query(query)
+	rows, err := repo.conn.QueryContext(ctx, query)
 	if err != nil {
 		return us, err
 	}
@@ -87,10 +88,10 @@ func (repo *userConn) Fetch() ([]models.User, error) {
 }
 
 // fetch user by id
-func (repo *userConn) FetchById(id int64) (models.User, error) {
+func (repo *userConn) FetchById(ctx context.Context, id int64) (models.User, error) {
 	var u models.User
 	sqlStmt := `SELECT * FROM users WHERE id = ?`
-	row := repo.conn.QueryRow(sqlStmt, id)
+	row := repo.conn.QueryRowContext(ctx, sqlStmt, id)
 	err := row.Scan(&u.ID, &u.Name, &u.Image, &u.Email, &u.Password, &u.Role, &u.CreatedAt)
 	if err != nil {
 		return u, err
@@ -100,25 +101,25 @@ func (repo *userConn) FetchById(id int64) (models.User, error) {
 }
 
 // create user
-func (repo *userConn) Create(u *models.User) (models.User, error) {
+func (repo *userConn) Create(ctx context.Context, u *models.User) (models.User, error) {
 	// hash password
 	u.Password, _ = hash.HashPassword(u.Password)
 
 	// check if email already exists
-	if _, err := repo.fetchUserByEmail(u.Email); err == nil {
+	if _, err := repo.fetchUserByEmail(ctx, u.Email); err == nil {
 		return *u, err
 	}
 
 	query := `INSERT INTO users (name, image, email, password) VALUES(?, ?, ?, ?)`
 
-	row, err := repo.conn.Exec(query, &u.Name, &u.Image, &u.Email, &u.Password)
+	row, err := repo.conn.ExecContext(ctx, query, &u.Name, &u.Image, &u.Email, &u.Password)
 	if err != nil {
 		return *u, err
 	}
 
 	lastId, _ := row.LastInsertId()
 
-	res, err := repo.FetchById(lastId)
+	res, err := repo.FetchById(ctx, lastId)
 	if err != nil {
 		return *u, err
 	}
@@ -127,9 +128,9 @@ func (repo *userConn) Create(u *models.User) (models.User, error) {
 }
 
 // update user
-func (repo *userConn) Update(id int64, u *models.User) (models.User, error) {
+func (repo *userConn) Update(ctx context.Context, id int64, u *models.User) (models.User, error) {
 	// check the user if exists
-	res, err := repo.FetchById(id)
+	res, err := repo.FetchById(ctx, id)
 	if err != nil {
 		return models.User{}, err
 	}
@@ -139,7 +140,7 @@ func (repo *userConn) Update(id int64, u *models.User) (models.User, error) {
 
 	query := `UPDATE users SET name = ?, image = ?,  email = ?, password = ? WHERE id = ?`
 
-	_, err = repo.conn.Exec(query, &u.Name, &u.Image, &u.Email, &password, id)
+	_, err = repo.conn.ExecContext(ctx, query, &u.Name, &u.Image, &u.Email, &password, id)
 	if err != nil {
 		return models.User{}, err
 	}
@@ -148,14 +149,14 @@ func (repo *userConn) Update(id int64, u *models.User) (models.User, error) {
 }
 
 // delete user
-func (repo *userConn) Delete(id int64) error {
+func (repo *userConn) Delete(ctx context.Context, id int64) error {
 	// check the user if exists
-	if _, err := repo.FetchById(id); err != nil {
+	if _, err := repo.FetchById(ctx, id); err != nil {
 		return err
 	}
 
 	query := `DELETE FROM users WHERE id = ?`
-	_, err := repo.conn.Exec(query, id)
+	_, err := repo.conn.ExecContext(ctx, query, id)
 	if err != nil {
 		return err
 	}
