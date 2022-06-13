@@ -16,10 +16,10 @@ func NewCategoryRepository(db *sql.DB) models.CategoryRepository {
 }
 
 // fetch categories
-func (db *categoryConn) Fetch(ctx context.Context) ([]models.Category, error) {
+func (ca *categoryConn) Fetch(ctx context.Context) ([]models.Category, error) {
 	query := `SELECT * FROM categories`
 
-	rows, err := db.conn.QueryContext(ctx, query)
+	rows, err := ca.conn.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -40,10 +40,10 @@ func (db *categoryConn) Fetch(ctx context.Context) ([]models.Category, error) {
 }
 
 // fetchById category
-func (db *categoryConn) FetchById(ctx context.Context, id int64) (models.Category, error) {
+func (ca *categoryConn) FetchById(ctx context.Context, id int64) (models.Category, error) {
 	query := `SELECT * FROM categories WHERE id = ?`
 
-	row := db.conn.QueryRowContext(ctx, query, id)
+	row := ca.conn.QueryRowContext(ctx, query, id)
 
 	var c models.Category
 
@@ -74,5 +74,30 @@ func (ca *categoryConn) Create(ctx context.Context, c *models.Category) (models.
 }
 
 // TODO: Update
+func (ca *categoryConn) Update(ctx context.Context, id int64, category models.Category) (models.Category, error) {
+	query := `UPDATE categories SET category_name = ? WHERE id = ?`
+
+	_, err := ca.conn.ExecContext(ctx, query, &category.CategoryName, id)
+	if err != nil {
+		return category, err
+	}
+
+	res, err := ca.FetchById(ctx, id)
+	if err != nil {
+		return category, err
+	}
+
+	return res, nil
+}
 
 // TODO: Delete
+func (ca *categoryConn) Delete(ctx context.Context, id int64) error {
+	query := `DELETE FROM categories WHERE id = ?`
+
+	_, err := ca.conn.ExecContext(ctx, query, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
