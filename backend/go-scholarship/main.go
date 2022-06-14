@@ -5,12 +5,15 @@ import (
 	"flag"
 	"log"
 	"os"
+	"time"
+
+	"go-scholarship/api/handlers"
+	"go-scholarship/api/repository"
+	"go-scholarship/api/usecase"
+	"go-scholarship/db/seeds"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
-	"go-scholarship/api/handlers"
-	"go-scholarship/api/repository"
-	"go-scholarship/db/seeds"
 	"github.com/spf13/viper"
 )
 
@@ -49,21 +52,25 @@ func main() {
 
 	r := gin.Default()
 
+	// timeout
+	t := time.Duration(2) * time.Second
+
 	// users
 	u := repository.NewUserRepo(db)
 	handlers.NewUserHandler(r, u)
 
+	// categories
+	ca := repository.NewCategoryRepository(db)
+	handlers.NewCategoryHandler(r, ca)
+
 	// scholarships
 	s := repository.NewScholarshipRepository(db)
-	handlers.NewScholarshipHandler(r, s)
+	su := usecase.NewScholarshipUseCase(s, u, ca, t)
+	handlers.NewScholarshipHandler(r, su)
 
 	// comments
 	co := repository.NewCommentRepository(db)
 	handlers.NewCommentHandler(r, co)
-
-	// categories
-	ca := repository.NewCategoryRepository(db)
-	handlers.NewCategoryHandler(r, ca)
 
 	// start server
 	r.Run(":" + port)
