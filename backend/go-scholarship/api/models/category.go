@@ -3,7 +3,7 @@ package models
 import "context"
 
 type Category struct {
-	ID           int    `json:"id" from:"id"`
+	ID           int64    `json:"id" from:"id"`
 	CategoryName string `json:"category_name" from:"category_name" binding:"required"`
 	CreatedAt    string `json:"created_at" from:"created_at"`
 }
