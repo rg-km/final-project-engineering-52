@@ -38,7 +38,7 @@ func (ca *categoryHandler) fetch(c *gin.Context) {
 }
 
 // fetch by id category
-func (ca *categoryHandler) FetchById(c *gin.Context) {
+func (ca *categoryHandler) fetchById(c *gin.Context) {
 	ctx := c.Request.Context()
 	id := c.Param("id")
 	idConv, _ := strconv.Atoi(id)
@@ -85,7 +85,7 @@ func (ca *categoryHandler) create(c *gin.Context) {
 }
 
 // update category
-func (ca *categoryHandler) Update(c *gin.Context) {
+func (ca *categoryHandler) update(c *gin.Context) {
 	ctx := c.Request.Context()
 	id := c.Param("id")
 
@@ -118,7 +118,7 @@ func (ca *categoryHandler) Update(c *gin.Context) {
 }
 
 // delete category
-func (ca *categoryHandler) Delete(c *gin.Context) {
+func (ca *categoryHandler) delete(c *gin.Context) {
 	ctx := c.Request.Context()
 	id := c.Param("id")
 
