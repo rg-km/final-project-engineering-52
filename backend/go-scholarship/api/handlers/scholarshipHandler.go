@@ -66,7 +66,7 @@ func (s *scholarHandler) fetchById(c *gin.Context) {
 // create scholarship
 func (s *scholarHandler) create(c *gin.Context) {
 	ctx := c.Request.Context()
-	scholar := models.Scholarship{}
+	scholar := models.ScholarRequest{}
 
 	if err := c.ShouldBind(&scholar); err != nil {
 		for _, v := range err.(validator.ValidationErrors) {
@@ -97,9 +97,21 @@ func (s *scholarHandler) create(c *gin.Context) {
 // update scholarship
 func (s *scholarHandler) update(c *gin.Context) {
 	ctx := c.Request.Context()
-	scholar := models.Scholarship{}
+	scholar := models.ScholarRequest{}
 	id := c.Param("id")
 	idConv, _ := strconv.Atoi(id)
+
+	if err := c.ShouldBind(&scholar); err != nil {
+		for _, v := range err.(validator.ValidationErrors) {
+			eM := errMessage(v)
+
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": eM,
+			})
+
+			return
+		}
+	}
 
 	res, err := s.scholarUseCase.Update(ctx, int64(idConv), &scholar)
 	if err != nil {

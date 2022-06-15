@@ -16,7 +16,7 @@ func NewScholarshipRepository(conn *sql.DB) models.ScholarshipRepository {
 }
 
 // fetch all scholarships
-func (s *scholarConn) Fetch(ctx context.Context) ([]models.Scholarship, error) {
+func (s *scholarConn) Fetch(ctx context.Context) ([]models.ScholarResponse, error) {
 	query := `SELECT * FROM scholarships`
 
 	rows, err := s.conn.QueryContext(ctx, query)
@@ -24,10 +24,10 @@ func (s *scholarConn) Fetch(ctx context.Context) ([]models.Scholarship, error) {
 		return nil, err
 	}
 
-	var scholars []models.Scholarship
+	var scholars []models.ScholarResponse
 
 	for rows.Next() {
-		var scholarship models.Scholarship
+		var scholarship models.ScholarResponse
 		err := rows.Scan(&scholarship.ID, &scholarship.Name, &scholarship.Description, &scholarship.Image, &scholarship.Category.ID, &scholarship.User.ID, &scholarship.CreatedAt)
 
 		if err != nil {
@@ -41,50 +41,52 @@ func (s *scholarConn) Fetch(ctx context.Context) ([]models.Scholarship, error) {
 }
 
 // fetch by id scholarship
-func (s *scholarConn) FetchById(ctx context.Context, id int64) (models.Scholarship, error) {
+func (s *scholarConn) FetchById(ctx context.Context, id int64) (models.ScholarResponse, error) {
 	query := `SELECT * FROM scholarships WHERE id = ?`
 
 	row := s.conn.QueryRowContext(ctx, query, id)
 
-	var scholar models.Scholarship
+	var scholar models.ScholarResponse
 	if err := row.Scan(&scholar.ID, &scholar.Name, &scholar.Description, &scholar.Image, &scholar.Category.ID, &scholar.User.ID, &scholar.CreatedAt); err != nil {
-		return models.Scholarship{}, err
+		return models.ScholarResponse{}, err
 	}
 
 	return scholar, nil
 }
 
 // create scholarship
-func (s *scholarConn) Create(ctx context.Context, scholar *models.Scholarship) (models.Scholarship, error) {
+func (s *scholarConn) Create(ctx context.Context, scholarReq *models.ScholarRequest) (models.ScholarResponse, error) {
+	var scholarResp models.ScholarResponse
 	query := `INSERT INTO scholarships (name, description, image, category_id, user_id) VALUES(?, ?, ?, ?, ?)`
 
-	row, err := s.conn.ExecContext(ctx, query, &scholar.Name, &scholar.Description, &scholar.Image, &scholar.Category.ID, &scholar.User.ID)
+	row, err := s.conn.ExecContext(ctx, query, &scholarReq.Name, &scholarReq.Description, &scholarReq.Image, &scholarReq.CategoryID, &scholarReq.UserID)
 	if err != nil {
-		return *scholar, err
+		return scholarResp, err
 	}
 
 	lastId, _ := row.LastInsertId()
 
 	res, err := s.FetchById(ctx, lastId)
 	if err != nil {
-		return *scholar, err
+		return scholarResp, err
 	}
 
 	return res, nil
 }
 
 // update scholarship
-func (s *scholarConn) Update(ctx context.Context, id int64, scholar *models.Scholarship) (models.Scholarship, error) {
+func (s *scholarConn) Update(ctx context.Context, id int64, scholarReq *models.ScholarRequest) (models.ScholarResponse, error) {
+	var scholarResp models.ScholarResponse
 	query := `UPDATE scholarships SET name = ?, description = ?, image = ?, category_id = ?, user_id = ?`
 
-	_, err := s.conn.ExecContext(ctx, query, &scholar.Name, &scholar.Description, &scholar.Image, &scholar.Category.ID, &scholar.User.ID)
+	_, err := s.conn.ExecContext(ctx, query, &scholarReq.Name, &scholarReq.Description, &scholarReq.Image, &scholarReq.CategoryID, &scholarReq.UserID)
 	if err != nil {
-		return *scholar, err
+		return scholarResp, err
 	}
 
 	res, err := s.FetchById(ctx, id)
 	if err != nil {
-		return *scholar, err
+		return scholarResp, err
 	}
 
 	return res, nil
