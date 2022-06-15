@@ -26,7 +26,7 @@ func NewScholarshipUseCase(scholarRepo models.ScholarshipRepository, userRepo mo
 }
 
 // fill user details at scholarship
-func (s *scholarUseCase) fillUserDetails(ctx context.Context, scholars []models.Scholarship) ([]models.Scholarship, error) {
+func (s *scholarUseCase) fillUserDetails(ctx context.Context, scholars []models.ScholarResponse) ([]models.ScholarResponse, error) {
 	g, ctx := errgroup.WithContext(ctx)
 
 	users := map[int64]models.User{}
@@ -78,7 +78,7 @@ func (s *scholarUseCase) fillUserDetails(ctx context.Context, scholars []models.
 }
 
 // fill category details at scholarship
-func (s *scholarUseCase) fillCategoryDetails(ctx context.Context, scholars []models.Scholarship) ([]models.Scholarship, error) {
+func (s *scholarUseCase) fillCategoryDetails(ctx context.Context, scholars []models.ScholarResponse) ([]models.ScholarResponse, error) {
 	g, ctx := errgroup.WithContext(ctx)
 
 	categories := map[int64]models.Category{}
@@ -130,7 +130,7 @@ func (s *scholarUseCase) fillCategoryDetails(ctx context.Context, scholars []mod
 }
 
 // fetch all scholarships
-func (s *scholarUseCase) Fetch(ctx context.Context) ([]models.Scholarship, error) {
+func (s *scholarUseCase) Fetch(ctx context.Context) ([]models.ScholarResponse, error) {
 	c, cancel := context.WithTimeout(ctx, s.timeout)
 
 	defer cancel()
@@ -154,24 +154,24 @@ func (s *scholarUseCase) Fetch(ctx context.Context) ([]models.Scholarship, error
 }
 
 // fetch by id scholarship
-func (s *scholarUseCase) FetchById(ctx context.Context, id int64) (models.Scholarship, error) {
+func (s *scholarUseCase) FetchById(ctx context.Context, id int64) (models.ScholarResponse, error) {
 	c, cancel := context.WithTimeout(ctx, s.timeout)
 
 	defer cancel()
 
 	scholar, err := s.scholarRepo.FetchById(c, id)
 	if err != nil {
-		return models.Scholarship{}, err
+		return models.ScholarResponse{}, err
 	}
 
 	category, err := s.categoryRepo.FetchById(c, scholar.Category.ID)
 	if err != nil {
-		return models.Scholarship{}, err
+		return models.ScholarResponse{}, err
 	}
 
 	user, err := s.userRepo.FetchById(c, scholar.User.ID)
 	if err != nil {
-		return models.Scholarship{}, err
+		return models.ScholarResponse{}, err
 	}
 
 	scholar.Category = category // fill category at scholar
@@ -181,21 +181,57 @@ func (s *scholarUseCase) FetchById(ctx context.Context, id int64) (models.Schola
 }
 
 // create scholarship
-func (s *scholarUseCase) Create(ctx context.Context, scholar *models.Scholarship) (models.Scholarship, error) {
+func (s *scholarUseCase) Create(ctx context.Context, scholarReq *models.ScholarRequest) (models.ScholarResponse, error) {
 	c, cancel := context.WithTimeout(ctx, s.timeout)
 
 	defer cancel()
 
-	return s.scholarRepo.Create(c, scholar)
+	scholarResp, err := s.scholarRepo.Create(c, scholarReq)
+	if err != nil {
+		return scholarResp, err
+	}
+
+	category, err := s.categoryRepo.FetchById(c, scholarReq.CategoryID)
+	if err != nil {
+		return scholarResp, err
+	}
+
+	user, err := s.userRepo.FetchById(c, scholarReq.UserID)
+	if err != nil {
+		return scholarResp, err
+	}
+
+	scholarResp.Category = category // fill user at scholar
+	scholarResp.User = user // fill user at scholar
+
+	return scholarResp, nil
 }
 
 // update scholarship
-func (s *scholarUseCase) Update(ctx context.Context, id int64, scholar *models.Scholarship) (models.Scholarship, error) {
+func (s *scholarUseCase) Update(ctx context.Context, id int64, scholarReq *models.ScholarRequest) (models.ScholarResponse, error) {
 	c, cancel := context.WithTimeout(ctx, s.timeout)
 
 	defer cancel()
 
-	return s.scholarRepo.Update(c, id, scholar)
+	scholarResp, err := s.scholarRepo.Update(c, id, scholarReq)
+	if err != nil {
+		return scholarResp, err
+	}
+
+	category, err := s.categoryRepo.FetchById(c, scholarReq.CategoryID)
+	if err != nil {
+		return scholarResp, err
+	}
+
+	user, err := s.userRepo.FetchById(c, scholarReq.UserID)
+	if err != nil {
+		return scholarResp, err
+	}
+
+	scholarResp.Category = category // fill user at scholar
+	scholarResp.User = user // fill user at scholar
+
+	return scholarResp, nil
 }
 
 // delete scholarship
