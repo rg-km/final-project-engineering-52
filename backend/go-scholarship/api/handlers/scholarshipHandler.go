@@ -19,15 +19,13 @@ func NewScholarshipHandler(r *gin.Engine, scholarUseCase models.ScholarshipUseCa
 	handler := &scholarHandler{
 		scholarUseCase: scholarUseCase,
 	}
-	// TODO: define routes
+	
+	// define routes
 	r.GET("/api/scholarships", handler.fetch)
 	r.GET("/api/scholarships/:id", handler.fetchById)
 	r.POST("/api/scholarships", handler.create)
 	r.PUT("/api/scholarships/:id", handler.update)
 	r.DELETE("/api/scholarships/:id", handler.delete)
-
-
-
 }
 
 // fetch all scholarships

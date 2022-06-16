@@ -18,7 +18,7 @@ type categoryHandler struct {
 func NewCategoryHandler(r *gin.Engine, categoryRepo models.CategoryRepository) {
 	handler := categoryHandler{categoryRepo}
 
-	// TODO: define routes
+	// define routes
 	r.GET("/api/categories", handler.fetch)
 	r.GET("/api/categories/:id", handler.fetchById)
 	r.POST("/api/categories", handler.create)
