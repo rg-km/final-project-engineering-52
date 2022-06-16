@@ -46,17 +46,11 @@ func (repo *userConn) Login(ctx context.Context, l *models.Login) (models.User, 
 
 // register
 func (repo *userConn) Register(ctx context.Context, u *models.User) (models.User, error) {
-	// check if email already exists
-	if _, err := repo.fetchUserByEmail(ctx, u.Email); err == nil {
-		return models.User{}, err
-	}
-
-	// hash password
-	u.Password, _ = hash.HashPassword(u.Password)
+	// TODO: check if email already exists
 
 	res, err := repo.Create(ctx, u)
 	if err != nil {
-		return models.User{}, err
+		return *u, err
 	}
 
 	return res, nil
