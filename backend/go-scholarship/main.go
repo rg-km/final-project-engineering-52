@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"go-scholarship/api/handlers"
+	"go-scholarship/api/handlers/middleware"
 	"go-scholarship/api/repository"
 	"go-scholarship/api/usecase"
 	"go-scholarship/db/seeds"
@@ -50,7 +51,11 @@ func main() {
 	// seeding
 	arguments(db)
 
-	r := gin.Default()
+	r := gin.New()
+
+	// middleware
+	m := middleware.InitMiddleware()
+	r.Use(m.CORS())
 
 	// timeout
 	t := time.Duration(2) * time.Second

@@ -23,9 +23,9 @@ func NewUserHandler(r *gin.Engine, userRepo models.UserRepository) {
 		userRepo: userRepo,
 	}
 
-	// auth middleware
-	auth := r.Group("/api")
-	auth.Use(middleware.JWTMiddleware())
+	// middleware
+	m := middleware.InitMiddleware()
+	auth := r.Group("/api").Use(m.JWTMiddleware())
 	{
 		auth.GET("/users", handler.fetch)
 		auth.GET("/users/:id", handler.fetchById)
@@ -73,8 +73,6 @@ func (u *userHandler) login(c *gin.Context) {
 
 	// JWT
 	token, _ := token.CreateToken(userLogin.Email)
-
-	c.Request.Header.Set("Authorization", "Bearer "+token)
 
 	// debug
 	fmt.Println(c.Request.Header.Get("Authorization"))
