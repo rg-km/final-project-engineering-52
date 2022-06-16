@@ -20,6 +20,10 @@ func NewCategoryHandler(r *gin.Engine, categoryRepo models.CategoryRepository) {
 
 	// TODO: define routes
 	r.GET("/api/categories", handler.fetch)
+	r.GET("/api/categories/:id", handler.fetchById)
+	r.POST("/api/categories", handler.create)
+	r.PUT("/api/categories/:id", handler.update)
+	r.DELETE("/api/categories/:id", handler.delete)
 }
 
 // fetch all categories
