@@ -75,7 +75,8 @@ func main() {
 
 	// comments
 	co := repository.NewCommentRepository(db)
-	handlers.NewCommentHandler(r, co)
+	cou := usecase.NewCommentUseCase(co, u, t)
+	handlers.NewCommentHandler(r, cou)
 
 	// start server
 	r.Run(":" + port)
