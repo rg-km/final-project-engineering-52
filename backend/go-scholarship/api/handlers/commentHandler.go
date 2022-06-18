@@ -18,8 +18,12 @@ type commentHandler struct {
 func NewCommentHandler(r *gin.Engine, commentRepo models.CommentRepository) {
 	handler := commentHandler{commentRepo}
 
-	// TODO: define routes
+	// define routes
 	r.GET("/api/comments", handler.fetch)
+	r.GET("/api/comments/:id", handler.fetchById)
+	r.POST("/api/comments", handler.create)
+	r.PUT("/api/comments/:id", handler.update)
+	r.DELETE("/api/comments/:id", handler.delete)
 }
 
 // fetch comments
