@@ -2,82 +2,115 @@ import {
   Flex,
   Box,
   FormControl,
-  FormLabel,
+  // FormLabel,
   Input,
   Checkbox,
   Stack,
-  // Link,
+  InputGroup,
+  InputLeftElement,
+  Icon,
+  Link,
   Button,
   Heading,
-  // Text,
+  Text,
   useColorModeValue,
-} from '@chakra-ui/react';
-import { useRef, useState } from 'react';
-import { useAuth } from '../Database/useAuth';
+} from "@chakra-ui/react";
+import { useRef, useState } from "react";
+import { useAuth } from "../Database/useAuth";
+import { MdOutlineEmail, MdPassword } from "react-icons/md";
 
 export default function Login() {
-  const {login}= useAuth(state =>state )
-  const [userForm,setUserForm] = useState({
-    email : '',
-    password : ''
-  })
-  const ref = useRef()
-  function changeHandler(e){
+  const { login } = useAuth((state) => state);
+  const [userForm, setUserForm] = useState({
+    email: "",
+    password: "",
+  });
+  const ref = useRef();
+  function changeHandler(e) {
     setUserForm({
       ...userForm,
-      [e.target.name]: e.target.value
-    })
+      [e.target.name]: e.target.value,
+    });
   }
-  const handleLogin = () =>{
-    login(userForm)
-  } 
+  const handleLogin = () => {
+    login(userForm);
+  };
   return (
     <Flex
-      minH={'100vh'}
-      align={'center'}
-      justify={'center'}
-      bg={useColorModeValue('gray.50', 'gray.800')}>
-      <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
-        <Stack align={'center'}>
-          <Heading fontSize={'4xl'}>GO - SCHOLARSHIP</Heading>
-          
+      minH={"100vh"}
+      align={"center"}
+      justify={"center"}
+      bg={useColorModeValue("gray.50", "gray.800")}
+    >
+      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+        <Stack align={"center"}>
+          <Heading fontSize={"4xl"}>GO - SCHOLARSHIP</Heading>
+
           {/* <Text fontSize={'lg'} color={'gray.600'}>
             to enjoy all of our cool <Link color={'blue.400'}>features</Link> ✌️
           </Text> */}
         </Stack>
         <Box
-          rounded={'lg'}
-          bg={useColorModeValue('white', 'gray.700')}
-          boxShadow={'lg'}
-          p={8}>
+          rounded={"lg"}
+          bg={useColorModeValue("white", "gray.700")}
+          boxShadow={"lg"}
+          p={8}
+        >
           <Stack spacing={4}>
             <FormControl id="email">
-              <FormLabel>Email address</FormLabel>
-              <Input type="email" name='email' onChange={changeHandler} ref={ref} />
+              <InputGroup>
+                <InputLeftElement
+                  pointerEvents="none"
+                  children={<Icon as={MdOutlineEmail} color="pink.300" />}
+                />
+                <Input
+                  type="email"
+                  pname="email"
+                  autoComplete="off"
+                  placeholder="Masukkan Email"
+                  onChange={changeHandler}
+                  ref={ref}
+                />
+              </InputGroup>
             </FormControl>
-            <FormControl id="password" >
-              <FormLabel>Password</FormLabel>
-              <Input type="password" onChange={changeHandler} name='password' ref={ref}/>
+            <FormControl id="password">
+              <InputGroup>
+                <InputLeftElement
+                  pointerEvents="none"
+                  children={<Icon as={MdPassword} color="pink.300" />}
+                />
+                <Input
+                  type="password"
+                  placeholder="Masukkan Password"
+                  onChange={changeHandler}
+                  ref={ref}
+                />
+              </InputGroup>
             </FormControl>
-            
             <Stack spacing={10}>
               <Stack
-                direction={{ base: 'column', sm: 'row' }}
-                align={'start'}
-                justify={'space-between'}>
+                direction={{ base: "column", sm: "row" }}
+                align={"start"}
+                justify={"space-between"}
+              >
                 <Checkbox>Ingat saya</Checkbox>
                 {/* <Link color={'blue.400'}>Forgot password?</Link> */}
               </Stack>
               <Button
-                bg={'pink.400'}
+                bg={"pink.400"}
                 onClick={handleLogin}
-                color={'white'}
+                color={"white"}
                 _hover={{
-                  bg: 'pink.500',
-                }}>
+                  bg: "pink.500",
+                }}
+              >
                 Masuk
               </Button>
-
+            </Stack>
+            <Stack spacing={10}>
+              <Text fontSize={"sm"} color={"black.600"}>
+                Belum punya akun? <Link color={"pink.400"}>Daftar</Link>
+              </Text>
             </Stack>
           </Stack>
         </Box>
