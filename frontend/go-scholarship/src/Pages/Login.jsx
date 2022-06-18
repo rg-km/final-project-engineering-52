@@ -6,17 +6,17 @@ import {
   Input,
   Checkbox,
   Stack,
-  Link,
+  // Link,
   Button,
   Heading,
-  Text,
+  // Text,
   useColorModeValue,
 } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 import { useAuth } from '../Database/useAuth';
 
 export default function Login() {
-  const {}= useAuth(state =>state )
+  const {login}= useAuth(state =>state )
   const [userForm,setUserForm] = useState({
     email : '',
     password : ''
@@ -29,7 +29,7 @@ export default function Login() {
     })
   }
   const handleLogin = () =>{
-    
+    login(userForm)
   } 
   return (
     <Flex
@@ -39,11 +39,11 @@ export default function Login() {
       bg={useColorModeValue('gray.50', 'gray.800')}>
       <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
         <Stack align={'center'}>
-          <Heading fontSize={'4xl'}>Sign in to your sss</Heading>
+          <Heading fontSize={'4xl'}>GO - SCHOLARSHIP</Heading>
           
-          <Text fontSize={'lg'} color={'gray.600'}>
+          {/* <Text fontSize={'lg'} color={'gray.600'}>
             to enjoy all of our cool <Link color={'blue.400'}>features</Link> ✌️
-          </Text>
+          </Text> */}
         </Stack>
         <Box
           rounded={'lg'}
@@ -65,17 +65,17 @@ export default function Login() {
                 direction={{ base: 'column', sm: 'row' }}
                 align={'start'}
                 justify={'space-between'}>
-                <Checkbox>Remember me</Checkbox>
-                <Link color={'blue.400'}>Forgot password?</Link>
+                <Checkbox>Ingat saya</Checkbox>
+                {/* <Link color={'blue.400'}>Forgot password?</Link> */}
               </Stack>
               <Button
-                bg={'blue.400'}
+                bg={'pink.400'}
                 onClick={handleLogin}
                 color={'white'}
                 _hover={{
-                  bg: 'blue.500',
+                  bg: 'pink.500',
                 }}>
-                Sign in
+                Masuk
               </Button>
 
             </Stack>
