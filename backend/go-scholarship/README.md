@@ -10,6 +10,41 @@
 
 <br>
 
+# **Available API**
+## **Authentication**
+Login : `http://localhost:8080/login` <br>
+Register : `http://localhost:8080/register`
+
+## **Users**
+Fetch all : `http://localhost:8080/api/users` <br>
+Create : `http://localhost:8080/api/users` <br>
+Get by id : `http://localhost:8080/api/users/:id` <br>
+Update : `http://localhost:8080/api/users/:id` <br>
+Delete : `http://localhost:8080/api/users/:id` <br>
+
+## **Scholarships**
+Fetch all : `http://localhost:8080/api/scholarships` <br>
+Create : `http://localhost:8080/api/scholarships` <br>
+Get by id : `http://localhost:8080/api/scholarships/:id` <br>
+Update : `http://localhost:8080/api/scholarships/:id` <br>
+Delete : `http://localhost:8080/api/scholarships/:id` <br>
+
+## **Categories**
+Fetch all : `http://localhost:8080/api/categories` <br>
+Create : `http://localhost:8080/api/categories` <br>
+Get by id : `http://localhost:8080/api/categories/:id` <br>
+Update : `http://localhost:8080/api/categories/:id` <br>
+Delete : `http://localhost:8080/api/categories/:id` <br>
+
+## **Comments**
+Fetch all : `http://localhost:8080/api/comments` <br>
+Create : `http://localhost:8080/api/comments` <br>
+Get by id : `http://localhost:8080/api/comments/:id` <br>
+Update : `http://localhost:8080/api/comments/:id` <br>
+Delete : `http://localhost:8080/api/comments/:id` <br>
+
+<br>
+
 # **Install golang-migration**
 ```bash
 go install -tags 'sqlite3' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
