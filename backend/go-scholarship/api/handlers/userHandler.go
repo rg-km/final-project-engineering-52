@@ -72,7 +72,7 @@ func (u *userHandler) login(c *gin.Context) {
 	}
 
 	// JWT
-	token, _ := token.CreateToken(userLogin.Email)
+	token, _ := token.CreateToken(userLogin.Email, userLogin.Role)
 
 	// debug
 	fmt.Println(c.Request.Header.Get("Authorization"))
@@ -124,6 +124,18 @@ func (u *userHandler) fetch(c *gin.Context) {
 			"message": models.InternalServer,
 		})
 
+		return
+	}
+
+	auth := c.Request.Header.Get("Authorization")
+
+	token, _ := token.ValidateToken(auth)
+
+	if token.Role != "admin" {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": models.Unauthorized,
+		})
+		
 		return
 	}
 

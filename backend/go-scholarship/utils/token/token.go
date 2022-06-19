@@ -10,14 +10,16 @@ var JwtToken = []byte("jwtToken")
 
 type Claims struct {
 	Email string `json:"email"`
+	Role string `json:"role"`
 	jwt.StandardClaims
 }
 
-func CreateToken(email string) (string, error) {
+func CreateToken(email, role string) (string, error) {
 	expTime := time.Now().Add(time.Hour * 12)
 
 	claims := &Claims{
 		Email: email,
+		Role: role,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expTime.Unix(),
 		},
