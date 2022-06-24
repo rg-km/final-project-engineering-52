@@ -17,7 +17,7 @@ type ScholarResponse struct {
 	Description string   `json:"description"`
 	Image       string   `json:"image"`
 	Category    Category `json:"category"`
-	User        User     `json:"user"`
+	User        UserResponse     `json:"user"`
 	CreatedAt   string   `json:"created_at"`
 }
 

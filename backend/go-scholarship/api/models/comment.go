@@ -11,11 +11,11 @@ type CommentRequest struct {
 }
 
 type CommentResponse struct {
-	ID            int64  `json:"id"`
-	Content       string `json:"content"`
-	User          User  `json:"user"`
-	ScholarshipID int64  `json:"scholarship_id"`
-	CreatedAt     string `json:"created_at"`
+	ID            int64        `json:"id"`
+	Content       string       `json:"content"`
+	User          UserResponse `json:"user"`
+	ScholarshipID int64        `json:"scholarship_id"`
+	CreatedAt     string       `json:"created_at"`
 }
 
 type CommentRepository interface {

@@ -29,128 +29,176 @@ func (repo *userConn) fetchUserByEmail(ctx context.Context, email string) (model
 	return u, nil
 }
 
-// login
-func (repo *userConn) Login(ctx context.Context, l *models.Login) (models.User, error) {
-	u, err := repo.fetchUserByEmail(ctx, l.Email)
+// fetch user by id for comparing password
+func (u *userConn) fetchById(ctx context.Context, id int64) (models.User, error) {
+	var user models.User
+	sqlStmt := `SELECT * FROM users WHERE id = ?`
+	row := u.conn.QueryRowContext(ctx, sqlStmt, id)
+	err := row.Scan(&user.ID, &user.Name, &user.Image, &user.Email, &user.Password, &user.Role, &user.CreatedAt)
 	if err != nil {
-		return u, err
+		return models.User{}, err
+	}
+
+	return user, nil
+}
+
+// login
+func (u *userConn) Login(ctx context.Context, login *models.Login) (models.UserResponse, error) {
+	user, err := u.fetchUserByEmail(ctx, login.Email)
+	if err != nil {
+		return models.UserResponse{}, err
 	}
 
 	// check if password matches
-	if err := hash.CheckPassword(u.Password, l.Password); err != nil {
-		return u, err
+	if err := hash.CheckPassword(user.Password, login.Password); err != nil {
+		return models.UserResponse{}, err
 	}
 
-	return u, nil
+	userResponse := &models.UserResponse{
+		ID:        user.ID,
+		Name:      user.Name,
+		Image:     user.Image,
+		Email:     user.Email,
+		Role:      user.Role,
+		CreatedAt: user.CreatedAt,
+	}
+
+	return *userResponse, nil
 }
 
 // register
-func (repo *userConn) Register(ctx context.Context, u *models.User) (models.User, error) {
-	// TODO: check if email already exists
-
-	res, err := repo.Create(ctx, u)
+func (u *userConn) Register(ctx context.Context, user *models.User) (models.UserResponse, error) {
+	res, err := u.Create(ctx, user)
 	if err != nil {
-		return *u, err
+		return models.UserResponse{}, err
 	}
 
 	return res, nil
 }
 
-// TODO: logout
-
 // fetch users
-func (repo *userConn) Fetch(ctx context.Context) ([]models.User, error) {
-	var us []models.User
+func (u *userConn) Fetch(ctx context.Context) ([]models.UserResponse, error) {
 	query := `SELECT * FROM users`
-	rows, err := repo.conn.QueryContext(ctx, query)
+	rows, err := u.conn.QueryContext(ctx, query)
 	if err != nil {
-		return us, err
+		return []models.UserResponse{}, err
 	}
 
 	defer rows.Close()
 
+	var users []models.UserResponse
 	for rows.Next() {
-		var u models.User
-		err = rows.Scan(&u.ID, &u.Name, &u.Image, &u.Email, &u.Password, &u.Role, &u.CreatedAt)
+		var user models.User
+		err = rows.Scan(&user.ID, &user.Name, &user.Image, &user.Email, &user.Password, &user.Role, &user.CreatedAt)
 		if err != nil {
-			return us, err
+			return []models.UserResponse{}, err
 		}
-		us = append(us, u)
+
+		userResponse := &models.UserResponse{
+			ID:        user.ID,
+			Name:      user.Name,
+			Image:     user.Image,
+			Email:     user.Email,
+			Role:      user.Role,
+			CreatedAt: user.CreatedAt,
+		}
+
+		users = append(users, *userResponse)
 	}
 
-	return us, nil
+	return users, nil
 }
 
 // fetch user by id
-func (repo *userConn) FetchById(ctx context.Context, id int64) (models.User, error) {
-	var u models.User
+func (u *userConn) FetchById(ctx context.Context, id int64) (models.UserResponse, error) {
+	var user models.User
 	sqlStmt := `SELECT * FROM users WHERE id = ?`
-	row := repo.conn.QueryRowContext(ctx, sqlStmt, id)
-	err := row.Scan(&u.ID, &u.Name, &u.Image, &u.Email, &u.Password, &u.Role, &u.CreatedAt)
+	row := u.conn.QueryRowContext(ctx, sqlStmt, id)
+	err := row.Scan(&user.ID, &user.Name, &user.Image, &user.Email, &user.Password, &user.Role, &user.CreatedAt)
 	if err != nil {
-		return u, err
+		return models.UserResponse{}, err
 	}
 
-	return u, nil
+	userResponse := &models.UserResponse{
+		ID:        user.ID,
+		Name:      user.Name,
+		Image:     user.Image,
+		Email:     user.Email,
+		Role:      user.Role,
+		CreatedAt: user.CreatedAt,
+	}
+
+	return *userResponse, nil
 }
 
 // create user
-func (repo *userConn) Create(ctx context.Context, u *models.User) (models.User, error) {
+func (u *userConn) Create(ctx context.Context, user *models.User) (models.UserResponse, error) {
 	// hash password
-	u.Password, _ = hash.HashPassword(u.Password)
-
-	// check if email already exists
-	if _, err := repo.fetchUserByEmail(ctx, u.Email); err == nil {
-		return *u, err
-	}
+	user.Password, _ = hash.HashPassword(user.Password)
 
 	query := `INSERT INTO users (name, image, email, password) VALUES(?, ?, ?, ?)`
 
-	row, err := repo.conn.ExecContext(ctx, query, &u.Name, &u.Image, &u.Email, &u.Password)
+	row, err := u.conn.ExecContext(ctx, query, &user.Name, &user.Image, &user.Email, &user.Password)
 	if err != nil {
-		return *u, err
+		return models.UserResponse{}, err
 	}
 
 	lastId, _ := row.LastInsertId()
 
-	res, err := repo.FetchById(ctx, lastId)
+	res, err := u.FetchById(ctx, lastId)
 	if err != nil {
-		return *u, err
+		return models.UserResponse{}, err
 	}
 
-	return res, nil
+	userResponse := &models.UserResponse{
+		ID:        res.ID,
+		Name:      res.Name,
+		Image:     res.Image,
+		Email:     res.Email,
+		Role:      res.Role,
+		CreatedAt: res.CreatedAt,
+	}
+
+	return *userResponse, nil
 }
 
 // update user
-func (repo *userConn) Update(ctx context.Context, id int64, u *models.User) (models.User, error) {
-	// check the user if exists
-	res, err := repo.FetchById(ctx, id)
+func (u *userConn) Update(ctx context.Context, id int64, user *models.User) (models.UserResponse, error) {
+	usr, err := u.fetchById(ctx, id)
 	if err != nil {
-		return models.User{}, err
+		return models.UserResponse{}, err
 	}
 
-	// hash password
-	password, _ := hash.HashPassword(u.Password)
+	// compare with the old password
+	if user.Password != usr.Password {
+		// hash password
+		user.Password, _ = hash.HashPassword(user.Password)
+	}
 
 	query := `UPDATE users SET name = ?, image = ?,  email = ?, password = ? WHERE id = ?`
 
-	_, err = repo.conn.ExecContext(ctx, query, &u.Name, &u.Image, &u.Email, &password, id)
+	_, err = u.conn.ExecContext(ctx, query, &user.Name, &user.Image, &user.Email, &user.Password, id)
 	if err != nil {
-		return models.User{}, err
+		return models.UserResponse{}, err
+	}
+
+	res, err := u.FetchById(ctx, id)
+	if err != nil {
+		return models.UserResponse{}, err
 	}
 
 	return res, nil
 }
 
 // delete user
-func (repo *userConn) Delete(ctx context.Context, id int64) error {
+func (u *userConn) Delete(ctx context.Context, id int64) error {
 	// check the user if exists
-	if _, err := repo.FetchById(ctx, id); err != nil {
+	if _, err := u.FetchById(ctx, id); err != nil {
 		return err
 	}
 
 	query := `DELETE FROM users WHERE id = ?`
-	_, err := repo.conn.ExecContext(ctx, query, id)
+	_, err := u.conn.ExecContext(ctx, query, id)
 	if err != nil {
 		return err
 	}
