@@ -7,7 +7,6 @@ import {
   Stack,
   Collapse,
   Icon,
-  Link,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -21,9 +20,32 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../Database/useAuth";
+
+const NAV_ITEMS = [
+  {
+    label: "Beasiswa",
+    children: [
+      {
+        label: "Beasiswa",
+        subLabel: "Trending Design to inspire you",
+        href: "/",
+      },
+    ],
+  },
+  {
+    label: "Contact",
+    href: "/contact",
+  },
+  {
+    label: "FAQ",
+    href: "/faq",
+  },
+];
 
 export default function NavbarApp() {
+  const {user, doLogout} = useAuth(s => s)
   const { isOpen, onToggle } = useDisclosure();
   const navigate = useNavigate();
   return (
@@ -79,7 +101,10 @@ export default function NavbarApp() {
           direction={"row"}
           spacing={6}
         >
-          <Button
+          {/* hilangkan ketika login */}
+          {JSON.stringify(user) === '{}' ? (
+            <>
+            <Button
             onClick={() => {
               navigate("/login");
             }}
@@ -104,6 +129,25 @@ export default function NavbarApp() {
           >
             Sign Up
           </Button>
+          </>
+          ) : (
+            <Button
+            display={{ base: "none", md: "inline-flex" }}
+            fontSize={"sm"}
+            fontWeight={600}
+            color={"white"}
+            onClick={() => {
+              doLogout(navigate)
+            }}
+            bg={"pink.400"}
+            _hover={{
+              bg: "pink.300",
+            }}
+          >
+            Logout
+          </Button>
+          )}
+          
         </Stack>
       </Flex>
 
@@ -127,7 +171,7 @@ const DesktopNav = () => {
             <PopoverTrigger>
               <Link
                 p={2}
-                href={navItem.href ?? "#"}
+                to={navItem.href ?? "#"}
                 fontSize={"sm"}
                 fontWeight={500}
                 color={linkColor}
@@ -166,7 +210,7 @@ const DesktopNav = () => {
 const DesktopSubNav = ({ label, href, subLabel }) => {
   return (
     <Link
-      href={href}
+      to={href}
       role={"group"}
       display={"block"}
       p={2}
@@ -221,8 +265,6 @@ const MobileNavItem = ({ label, children, href }) => {
     <Stack spacing={4} onClick={children && onToggle}>
       <Flex
         py={2}
-        as={Link}
-        href={href ?? "#"}
         justify={"space-between"}
         align={"center"}
         _hover={{
@@ -257,7 +299,7 @@ const MobileNavItem = ({ label, children, href }) => {
         >
           {children &&
             children.map((child) => (
-              <Link key={child.label} py={2} href={child.href}>
+              <Link key={child.label} py={2} to={child.href}>
                 {child.label}
               </Link>
             ))}
@@ -266,24 +308,3 @@ const MobileNavItem = ({ label, children, href }) => {
     </Stack>
   );
 };
-
-const NAV_ITEMS = [
-  {
-    label: "Beasiswa",
-    children: [
-      {
-        label: "Beasiswa",
-        subLabel: "Trending Design to inspire you",
-        href: "#",
-      },
-    ],
-  },
-  {
-    label: "Contact",
-    href: "/contact",
-  },
-  {
-    label: "FAQ",
-    href: "/faq",
-  },
-];

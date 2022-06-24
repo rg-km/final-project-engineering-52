@@ -12,8 +12,10 @@ import {
   // createIcon,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 export default function Hero() {
+  const navigate = useNavigate()
   return (
     <Container maxW={"7xl"}>
       <Stack
@@ -24,16 +26,17 @@ export default function Hero() {
       >
         <Stack flex={1} spacing={{ base: 5, md: 10 }}>
           <Heading
+            textAlign={"left"}
             lineHeight={1.1}
             fontWeight={600}
             fontSize={{ base: "3xl", sm: "4xl", lg: "6xl" }}
           >
             <br />
-            <Text align={"left"} as={"span"} color={"pink.400"}>
+            <Text as={"span"} color={"pink.400"}>
               Pelajari Segalanya dan Jelajahi Keterampilan Anda
             </Text>
           </Heading>
-          <Text color={"gray.500"}>
+          <Text color={"gray.500"} textAlign={"left"}>
             Pelajari Segalanya dan Jelajahi Keterampilan Anda
           </Text>
           <Stack
