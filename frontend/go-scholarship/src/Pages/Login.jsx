@@ -18,13 +18,27 @@ import {
 import { useRef, useState } from "react";
 import { useAuth } from "../Database/useAuth";
 import { MdOutlineEmail, MdPassword } from "react-icons/md";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function Login() {
-  const { login } = useAuth((state) => state);
+  const location = useLocation();
+  const asal = location?.state?.from?.pathname || "/"
+  const navigate = useNavigate();
+  const { login, user } = useAuth((state) => state);
   const [userForm, setUserForm] = useState({
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    if(JSON.stringify(user) !== '{}') {
+      navigate(asal, {
+        replace: true
+      })
+    }
+  }, [])
+
   const ref = useRef();
   function changeHandler(e) {
     setUserForm({
@@ -32,8 +46,9 @@ export default function Login() {
       [e.target.name]: e.target.value,
     });
   }
-  const handleLogin = () => {
-    login(userForm);
+  const handleLogin = (e) => {
+    e.preventDefault()
+    login(userForm, navigate);
   };
   return (
     <Flex
@@ -65,7 +80,7 @@ export default function Login() {
                 />
                 <Input
                   type="email"
-                  pname="email"
+                  name="email"
                   autoComplete="off"
                   placeholder="Masukkan Email"
                   onChange={changeHandler}
@@ -81,6 +96,7 @@ export default function Login() {
                 />
                 <Input
                   type="password"
+                  name="password"
                   placeholder="Masukkan Password"
                   onChange={changeHandler}
                   ref={ref}
