@@ -127,6 +127,7 @@ func (u *userHandler) fetch(c *gin.Context) {
 		return
 	}
 
+	// role check
 	auth := c.Request.Header.Get("Authorization")
 
 	token, _ := token.ValidateToken(auth)
@@ -135,13 +136,13 @@ func (u *userHandler) fetch(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": models.Unauthorized,
 		})
-		
+
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "users fetched",
-		"data":    users,
+		"users":   users,
 	})
 }
 
@@ -167,7 +168,7 @@ func (u *userHandler) fetchById(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "user fetched",
-		"data":    user,
+		"user":    user,
 	})
 }
 
