@@ -20,6 +20,7 @@ function App() {
       <Route path="/register" element={<Register />}/>
       <Route path="/faq" element={<Faq />}/>
       <Route path="/contact" element={<Contct />}/>
+      <Route path="/list-beasiswa" element={<Listbea />}/>
     </Routes>
     </div>
   );
