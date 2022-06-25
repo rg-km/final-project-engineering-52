@@ -77,9 +77,9 @@ func (co *commentConn) Create(ctx context.Context, commentReq *models.CommentReq
 // update comment
 func (co *commentConn) Update(ctx context.Context, id int64, commentReq *models.CommentRequest) (models.CommentResponse, error) {
 	var commentResp models.CommentResponse
-	query := `UPDATE comments SET content = ?, user_id = ?, scholarship_id = ?`
+	query := `UPDATE comments SET content = ?, user_id = ?, scholarship_id = ? WHERE id = ?`
 
-	_, err := co.conn.ExecContext(ctx, query, &commentReq.Content, &commentReq.UserID, &commentReq.ScholarshipID)
+	_, err := co.conn.ExecContext(ctx, query, &commentReq.Content, &commentReq.UserID, &commentReq.ScholarshipID, id)
 	if err != nil {
 		return commentResp, err
 	}
@@ -94,6 +94,11 @@ func (co *commentConn) Update(ctx context.Context, id int64, commentReq *models.
 
 // delete comment
 func (co *commentConn) Delete(ctx context.Context, id int64) error {
+	// check comment if exist
+	if _, err := co.FetchById(ctx, id); err != nil {
+		return err
+	}
+
 	query := `DELETE FROM comments WHERE id = ?`
 
 	_, err := co.conn.ExecContext(ctx, query, id)

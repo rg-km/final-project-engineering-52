@@ -1,3 +1,4 @@
+import { EmailIcon } from "@chakra-ui/icons";
 import {
   Flex,
   Box,
@@ -17,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 // import { PhoneIcon } from "@chakra-ui/icons";
 // import { CgProfile } from "react-icons";
-import { MdSettings } from "react-icons/md";
+import { MdBook, MdCreditCard, MdPassword } from "react-icons/md";
 
 export default function Login() {
   return (
@@ -32,7 +33,7 @@ export default function Login() {
           <Heading fontSize={"4xl"}>Daftar Akun</Heading>
           <Text fontSize={"lg"} color={"gray.600"}>
             Sudah Punya Akun Go-Scholarship ?{" "}
-            <Link color={"pink.400" }>Masuk</Link>
+            <Link color={"pink.400"}>Masuk</Link>
           </Text>
         </Stack>
         <Box
@@ -42,34 +43,50 @@ export default function Login() {
           p={8}
         >
           <Stack spacing={4}>
-          <InputGroup>
-              <InputLeftElement
-                pointerEvents="none"
-                children={<Icon as={MdSettings} color="gray.300" />}
-              />
-              <Input type="text" placeholder="Masukkan Nama Lengkap" />
-            </InputGroup>
-           
             <InputGroup>
               <InputLeftElement
                 pointerEvents="none"
-                children={<Icon as={MdSettings} color="gray.300" />}
+                children={<Icon as={MdCreditCard} color="pink.300" />}
               />
-              <Input type="text" placeholder="Masukkan Pendidikan" />
+              <Input
+                type="text"
+                autoComplete="off"
+                placeholder="Masukkan Nama Lengkap"
+              />
+            </InputGroup>
+
+            <InputGroup>
+              <InputLeftElement
+                pointerEvents="none"
+                children={<Icon as={MdBook} color="pink.300" />}
+              />
+              <Input
+                type="text"
+                autoComplete="off"
+                placeholder="Masukkan Pendidikan"
+              />
             </InputGroup>
             <InputGroup>
               <InputLeftElement
                 pointerEvents="none"
-                children={<Icon as={MdSettings} color="gray.300" />}
+                children={<Icon as={EmailIcon} color="pink.300" />}
               />
-              <Input type="email" placeholder="Masukkan Email" />
+              <Input
+                type="email"
+                autoComplete="off"
+                placeholder="Masukkan Email"
+              />
             </InputGroup>
             <InputGroup>
               <InputLeftElement
                 pointerEvents="none"
-                children={<Icon as={MdSettings} color="gray.300" />}
+                children={<Icon as={MdPassword} color="pink.300" />}
               />
-              <Input type="password" placeholder="Masukkan Password" />
+              <Input
+                type="password"
+                autoComplete="off"
+                placeholder="Masukkan Password"
+              />
             </InputGroup>
             {/* <FormControl id="password">
               <FormLabel>Password</FormLabel>
@@ -81,7 +98,11 @@ export default function Login() {
                 align={"start"}
                 justify={"space-between"}
               >
-                <Checkbox textAlign={'left'}>Dengan mendaftar, kamu setuju untuk mengikuti <Link color={"pink.400"}>Syarat Penggunaan</Link> dan <Link color={"pink.400"}>Kebijakan Privasi.</Link></Checkbox>
+                <Checkbox textAlign={"left"}>
+                  Dengan mendaftar, kamu setuju untuk mengikuti{" "}
+                  <Link color={"pink.400"}>Syarat Penggunaan</Link> dan{" "}
+                  <Link color={"pink.400"}>Kebijakan Privasi.</Link>
+                </Checkbox>
                 {/* <Link color={"blue.400"}>Forgot password?</Link> */}
               </Stack>
               <Button
