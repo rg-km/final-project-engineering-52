@@ -4,7 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"go-scholarship/api/handlers/middleware"
 	"go-scholarship/api/models"
+	"go-scholarship/utils/token"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -19,16 +21,34 @@ func NewCommentHandler(r *gin.Engine, commentRepo models.CommentRepository) {
 	handler := commentHandler{commentRepo}
 
 	// define routes
-	r.GET("/api/comments", handler.fetch)
-	r.GET("/api/comments/:id", handler.fetchById)
-	r.POST("/api/comments", handler.create)
-	r.PUT("/api/comments/:id", handler.update)
-	r.DELETE("/api/comments/:id", handler.delete)
+	m := middleware.InitMiddleware()
+	auth := r.Group("/api").Use(m.JWTMiddleware())
+	{
+		auth.GET("/comments", handler.fetch)
+		auth.GET("/comments/:id", handler.fetchById)
+		auth.POST("/comments", handler.create)
+		auth.PUT("/comments/:id", handler.update)
+		auth.DELETE("/comments/:id", handler.delete)
+	}
 }
 
 // fetch comments
 func (co *commentHandler) fetch(c *gin.Context) {
 	ctx := c.Request.Context()
+
+	// role check
+	auth := c.Request.Header.Get("Authorization")
+
+	token, _ := token.ValidateToken(auth)
+
+	if token.Role != "admin" {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": models.Unauthorized,
+		})
+
+		return
+	}
+
 	comments, err := co.commentUseCase.Fetch(ctx)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -46,6 +66,20 @@ func (co *commentHandler) fetchById(c *gin.Context) {
 	ctx := c.Request.Context()
 	id := c.Param("id")
 	idConv, _ := strconv.Atoi(id)
+
+	// role check
+	auth := c.Request.Header.Get("Authorization")
+
+	token, _ := token.ValidateToken(auth)
+
+	if token.Role != "admin" {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": models.Unauthorized,
+		})
+
+		return
+	}
+
 	comment, err := co.commentUseCase.FetchById(ctx, int64(idConv))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
