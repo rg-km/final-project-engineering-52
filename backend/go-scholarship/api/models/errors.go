@@ -1,7 +1,8 @@
 package models
 
 const (
-	BadRequest = "bad request"
+	BadRequest     = "bad request"
 	InternalServer = "internal server error"
-	Unauthorized = "unauthorized"
+	Unauthorized   = "unauthorized"
+	ItemNotFound   = "item not found"
 )
