@@ -8,6 +8,8 @@ import Faq from './Pages/Faq';
 import Contct from './Pages/ContactUs';
 import Detailbea from './Pages/Detailbea'
 import Listbea from './Pages/Listbea'
+import Profile from './Pages/Profile'
+
 function App() {
   return (
     <div className="App">
@@ -21,6 +23,7 @@ function App() {
       <Route path="/faq" element={<Faq />}/>
       <Route path="/contact" element={<Contct />}/>
       <Route path="/list-beasiswa" element={<Listbea />}/>
+      <Route path="/profile" element={<Profile />}/>
     </Routes>
     </div>
   );
