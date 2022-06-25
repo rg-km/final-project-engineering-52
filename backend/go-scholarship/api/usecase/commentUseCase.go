@@ -105,7 +105,7 @@ func (co *commentUseCase) FetchById(ctx context.Context, id int64) (models.Comme
 		return models.CommentResponse{}, err
 	}
 
-	user, err := co.userRepo.FetchById(c, commentResp.ID)
+	user, err := co.userRepo.FetchById(c, commentResp.User.ID)
 	if err != nil {
 		return models.CommentResponse{}, err
 	}
