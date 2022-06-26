@@ -6,7 +6,6 @@ import {
   Flex,
   Icon,
   useColorModeValue,
-  Link,
   Drawer,
   DrawerContent,
   Text,
@@ -22,13 +21,19 @@ import {
   FiSettings,
   FiMenu,
 } from 'react-icons/fi';
+import {Link} from 'react-router-dom'
 import { IconType } from 'react-icons';
 import { ReactText } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import Category from './Admin/Category';
+import Scholarship from './Admin/Scholarship';
+import Comment from './Admin/Comment';
+import User from './Admin/User';
 const LinkItems = [
-  { name: 'User', icon: FiHome },
-  { name: 'Comment', icon: FiTrendingUp },
-  { name: 'Scholarship', icon: FiCompass },
-  { name: 'Category', icon: FiStar },
+  { name: 'User', link:'/admin', icon: FiHome },
+  { name: 'Comment',link:'/admin/comment', icon: FiTrendingUp },
+  { name: 'Scholarship', link:'/admin/scholarship', icon: FiCompass },
+  { name: 'Category',link:'/admin/category', icon: FiStar },
 ];
 
 export default function SimpleSidebar({ children }) {
@@ -54,7 +59,12 @@ export default function SimpleSidebar({ children }) {
       {/* mobilenav */}
       <MobileNav display={{ base: 'flex', md: 'none' }} onOpen={onOpen} />
       <Box ml={{ base: 0, md: 60 }} p="4">
-        {children}
+      <Routes>
+      <Route path="/" element={<User/>}/>
+      <Route path="/comment" element={<Comment/>}/>
+      <Route path="/scholarship" element={<Scholarship/>}/>
+      <Route path="/category" element={<Category/>}/>
+      </Routes>
       </Box>
     </Box>
   );
@@ -74,7 +84,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon}>
+        <NavItem link={link.link} key={link.name} icon={link.icon}>
           {link.name}
         </NavItem>
       ))}
@@ -82,9 +92,9 @@ const SidebarContent = ({ onClose, ...rest }) => {
   );
 };
 
-const NavItem = ({ icon, children, ...rest }) => {
+const NavItem = ({ icon, link, children, ...rest }) => {
   return (
-    <Link href="#" style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
+    <Link to={link} style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
       <Flex
         align="center"
         p="4"
