@@ -29,13 +29,13 @@ func NewScholarshipUseCase(scholarRepo models.ScholarshipRepository, userRepo mo
 func (s *scholarUseCase) fillUserDetails(ctx context.Context, scholars []models.ScholarResponse) ([]models.ScholarResponse, error) {
 	g, ctx := errgroup.WithContext(ctx)
 
-	users := map[int64]models.User{}
+	users := map[int64]models.UserResponse{}
 
 	for _, scholar := range scholars {
-		users[scholar.User.ID] = models.User{}
+		users[scholar.User.ID] = models.UserResponse{}
 	}
 
-	userChan := make(chan models.User)
+	userChan := make(chan models.UserResponse)
 	for id := range users {
 		id := id
 		g.Go(func() error {
@@ -59,7 +59,7 @@ func (s *scholarUseCase) fillUserDetails(ctx context.Context, scholars []models.
 	}()
 
 	for user := range userChan {
-		if user != (models.User{}) {
+		if user != (models.UserResponse{}) {
 			users[user.ID] = user
 		}
 	}

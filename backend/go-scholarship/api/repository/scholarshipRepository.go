@@ -77,9 +77,9 @@ func (s *scholarConn) Create(ctx context.Context, scholarReq *models.ScholarRequ
 // update scholarship
 func (s *scholarConn) Update(ctx context.Context, id int64, scholarReq *models.ScholarRequest) (models.ScholarResponse, error) {
 	var scholarResp models.ScholarResponse
-	query := `UPDATE scholarships SET name = ?, description = ?, image = ?, category_id = ?, user_id = ?`
+	query := `UPDATE scholarships SET name = ?, description = ?, image = ?, category_id = ?, user_id = ? WHERE id  = ?`
 
-	_, err := s.conn.ExecContext(ctx, query, &scholarReq.Name, &scholarReq.Description, &scholarReq.Image, &scholarReq.CategoryID, &scholarReq.UserID)
+	_, err := s.conn.ExecContext(ctx, query, &scholarReq.Name, &scholarReq.Description, &scholarReq.Image, &scholarReq.CategoryID, &scholarReq.UserID, id)
 	if err != nil {
 		return scholarResp, err
 	}
@@ -94,6 +94,11 @@ func (s *scholarConn) Update(ctx context.Context, id int64, scholarReq *models.S
 
 // delete scholarship
 func (s *scholarConn) Delete(ctx context.Context, id int64) error {
+	// check scholar if exist
+	if _, err := s.FetchById(ctx, id); err != nil {
+		return err
+	}
+
 	query := `DELETE FROM scholarships WHERE id = ?`
 
 	_, err := s.conn.ExecContext(ctx, query, id)

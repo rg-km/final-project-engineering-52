@@ -27,13 +27,13 @@ func NewCommentUseCase(commentRepo models.CommentRepository, userRepo models.Use
 func (co *commentUseCase) fillUserDetails(ctx context.Context, comments []models.CommentResponse) ([]models.CommentResponse, error) {
 	g, ctx := errgroup.WithContext(ctx)
 
-	users := map[int64]models.User{}
+	users := map[int64]models.UserResponse{}
 
 	for _, scholar := range comments {
-		users[scholar.User.ID] = models.User{}
+		users[scholar.User.ID] = models.UserResponse{}
 	}
 
-	userChan := make(chan models.User)
+	userChan := make(chan models.UserResponse)
 	for id := range users {
 		id := id
 		g.Go(func() error {
@@ -57,7 +57,7 @@ func (co *commentUseCase) fillUserDetails(ctx context.Context, comments []models
 	}()
 
 	for user := range userChan {
-		if user != (models.User{}) {
+		if user != (models.UserResponse{}) {
 			users[user.ID] = user
 		}
 	}
@@ -105,7 +105,7 @@ func (co *commentUseCase) FetchById(ctx context.Context, id int64) (models.Comme
 		return models.CommentResponse{}, err
 	}
 
-	user, err := co.userRepo.FetchById(c, commentResp.ID)
+	user, err := co.userRepo.FetchById(c, commentResp.User.ID)
 	if err != nil {
 		return models.CommentResponse{}, err
 	}

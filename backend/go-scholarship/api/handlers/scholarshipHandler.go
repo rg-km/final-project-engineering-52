@@ -140,7 +140,7 @@ func (s *scholarHandler) delete(c *gin.Context) {
 	err := s.scholarUseCase.Delete(ctx, int64(idConv))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": models.InternalServer,
+			"message": models.ItemNotFound,
 		})
 		return
 	}
