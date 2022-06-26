@@ -12,6 +12,10 @@ import { CreateBeasiswa } from './Pages/CreateBeasiswa';
 import Profile from './Pages/Profile'
 import { RequireAuth } from './Components/ProtectedRoute';
 import Admin from './Pages/Admin'
+import Scholarship from './Pages/Admin/Scholarship';
+import Category from './Pages/Admin/Category';
+import Comment from './Pages/Admin/Comment';
+import User from './Pages/Admin/User';
 
 
 function App() {
@@ -29,7 +33,12 @@ function App() {
       <Route path="/list-beasiswa" element={<Listbea />}/>
       <Route path="/beasiswa/create" element={<RequireAuth><CreateBeasiswa /></RequireAuth> }/>
       <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth> }/>
-      <Route path="/admin" element={<RequireAuth><Admin /></RequireAuth> }/>
+      
+      <Route path="/admin" element={<RequireAuth><Admin><User/></Admin></RequireAuth> }/>
+      <Route path="/admin/user" element={<RequireAuth><Admin><User/></Admin></RequireAuth> }/>
+      <Route path="/admin/comment" element={<RequireAuth><Admin><Comment /></Admin></RequireAuth> }/>
+      <Route path="/admin/scholarship" element={<RequireAuth><Admin><Scholarship /></Admin></RequireAuth> }/>
+      <Route path="/admin/category" element={<RequireAuth><Admin><Category /></Admin></RequireAuth> }/>
       
 
     </Routes>

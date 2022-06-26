@@ -59,12 +59,7 @@ export default function SimpleSidebar({ children }) {
       {/* mobilenav */}
       <MobileNav display={{ base: 'flex', md: 'none' }} onOpen={onOpen} />
       <Box ml={{ base: 0, md: 60 }} p="4">
-      <Routes>
-      <Route path="/" element={<User/>}/>
-      <Route path="/comment" element={<Comment/>}/>
-      <Route path="/scholarship" element={<Scholarship/>}/>
-      <Route path="/category" element={<Category/>}/>
-      </Routes>
+        {children}
       </Box>
     </Box>
   );
