@@ -13,6 +13,7 @@ import {
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
+  DarkMode,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -26,13 +27,7 @@ import { useAuth } from "../Database/useAuth";
 const NAV_ITEMS = [
   {
     label: "Beasiswa",
-    children: [
-      {
-        label: "Beasiswa",
-        subLabel: "Trending Design to inspire you",
-        href: "/",
-      },
-    ],
+      href: "/",
   },
   {
     label: "Contact",
@@ -94,7 +89,9 @@ export default function NavbarApp() {
             <DesktopNav />
           </Flex>
         </Flex>
-
+              <Button>
+                <DarkMode />
+              </Button>
         <Stack
           flex={{ base: 1, md: 0 }}
           justify={"flex-end"}
