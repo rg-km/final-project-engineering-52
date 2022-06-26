@@ -23,11 +23,12 @@ import {
 } from "@chakra-ui/icons";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../Database/useAuth";
+import Darkmode from "./Darkmode";
 
 const NAV_ITEMS = [
   {
     label: "Beasiswa",
-      href: "/",
+      href: "/list-beasiswa",
   },
   {
     label: "Contact",
@@ -46,8 +47,8 @@ export default function NavbarApp() {
   return (
     <Box>
       <Flex
-        bg={useColorModeValue("white", "gray.800")}
-        color={useColorModeValue("gray.600", "white")}
+        bg={useColorModeValue("#F2789F", "black.800")}
+        color={useColorModeValue("black.600", "white")}
         minH={"60px"}
         py={{ base: 2 }}
         px={{ base: 4 }}
@@ -81,12 +82,9 @@ export default function NavbarApp() {
           >
             GO-SCHOLARSHIP
           </Text>
-          {/* <img src={'/logo.png'} align={useBreakpointValue({ base: 'center', md: 'left' })} onClick={() => {
-                navigate('/')
-              }} alt={'logo'} width={'100px'} /> */}
-
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
             <DesktopNav />
+           
           </Flex>
         </Flex>
               <Button>
@@ -98,10 +96,16 @@ export default function NavbarApp() {
           direction={"row"}
           spacing={6}
         >
+          <Button width={'10'}>
+          <Darkmode/>
+          </Button>
+         
           {/* hilangkan ketika login */}
           {JSON.stringify(user) === '{}' ? (
             <>
             <Button
+            color={"white"}
+            textDecoration={"none"}
             onClick={() => {
               navigate("/login");
             }}
