@@ -24,6 +24,7 @@ import {
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../Database/useAuth";
 import Darkmode from "./Darkmode";
+import { MdBook, MdPerson } from "react-icons/md";
 
 const NAV_ITEMS = [
   {
@@ -133,6 +134,12 @@ export default function NavbarApp() {
           </Button>
           </>
           ) : (
+            <>
+            <Button
+             
+             width={'10'} onClick={() => navigate('/profile')}>
+            <Icon as={MdPerson}></Icon>
+            </Button>
             <Button
             display={{ base: "none", md: "inline-flex" }}
             fontSize={"sm"}
@@ -148,6 +155,7 @@ export default function NavbarApp() {
           >
             Logout
           </Button>
+            </>
           )}
           
         </Stack>
@@ -164,11 +172,12 @@ const DesktopNav = () => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
+  const {user} = useAuth (s => s)
 
   return (
     <Stack direction={"row"} spacing={4}>
       {NAV_ITEMS.map((navItem) => (
-        <Box key={navItem.label}>
+        <Box key={navItem.label} style={{display: user?.role !== 'admin' ? 'none' : 'flex'}}> 
           <Popover trigger={"hover"} placement={"bottom-start"}>
             <PopoverTrigger>
               <Link
