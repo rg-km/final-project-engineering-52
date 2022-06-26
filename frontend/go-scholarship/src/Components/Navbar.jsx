@@ -177,7 +177,7 @@ const DesktopNav = () => {
   return (
     <Stack direction={"row"} spacing={4}>
       {NAV_ITEMS.map((navItem) => (
-        <Box key={navItem.label} style={{display: user?.role !== 'admin' ? 'none' : 'flex'}}> 
+        <Box key={navItem.label}> 
           <Popover trigger={"hover"} placement={"bottom-start"}>
             <PopoverTrigger>
               <Link

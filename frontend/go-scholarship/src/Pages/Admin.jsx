@@ -21,7 +21,7 @@ import {
   FiSettings,
   FiMenu,
 } from 'react-icons/fi';
-import {Link} from 'react-router-dom'
+import {Link, Navigate, useLocation} from 'react-router-dom'
 import { IconType } from 'react-icons';
 import { ReactText } from 'react';
 import { Route, Routes } from 'react-router-dom';
@@ -29,6 +29,7 @@ import Category from './Admin/Category';
 import Scholarship from './Admin/Scholarship';
 import Comment from './Admin/Comment';
 import User from './Admin/User';
+import { useAuth } from '../Database/useAuth';
 const LinkItems = [
   { name: 'User', link:'/admin', icon: FiHome },
   { name: 'Comment',link:'/admin/comment', icon: FiTrendingUp },
@@ -37,7 +38,13 @@ const LinkItems = [
 ];
 
 export default function SimpleSidebar({ children }) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {user} = useAuth(s=>s)
+    const { isOpen, onOpen, onClose } = useDisclosure();
+  // let location = useLocation();
+  // if (user?.role !== 'admin') {
+  //   return <Navigate to="/" state={{ from: location }} replace />;
+  // }
+
   return (
     <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
       <SidebarContent

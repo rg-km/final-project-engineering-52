@@ -43,7 +43,7 @@ import { useAuth } from '../Database/useAuth';
           </Stat>
           <Stat>
           <StatLabel>Pendidikan</StatLabel>
-          <StatHelpText>sd</StatHelpText>
+          <StatHelpText>SMA</StatHelpText>
           </Stat>
           <Stat>
           <StatLabel>Email</StatLabel>
