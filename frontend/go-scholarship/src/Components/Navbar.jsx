@@ -38,6 +38,10 @@ const NAV_ITEMS = [
     label: "FAQ",
     href: "/faq",
   },
+  {
+    label: "Admin",
+    href: "/admin",
+  },
 ];
 
 export default function NavbarApp() {

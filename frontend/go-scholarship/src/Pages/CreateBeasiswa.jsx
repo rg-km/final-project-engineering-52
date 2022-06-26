@@ -13,7 +13,7 @@ import {
   export function CreateBeasiswa() {
     return (
       <>
-      <Heading><h2>Create Beasiswa</h2></Heading>
+      <Heading textAlign={"center"}><h2>Create Beasiswa</h2></Heading>
         <Box
           marginTop={'100'}
           marginLeft={'auto'}
