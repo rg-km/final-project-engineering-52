@@ -9,15 +9,16 @@ import {
     Input,
     FormControl,
     FormLabel,
+    Link,
   } from '@chakra-ui/react';
   
-  export default function editProfile() {
+  export default function Editprof() {
     return (
       <Center py={6}>
         <Box
           maxW={'320px'}
           w={'full'}
-          bg={('white', 'gray.900')}
+          bg={'gray.75'}
           boxShadow={'2xl'}
           rounded={'lg'}
           p={6}
@@ -91,7 +92,7 @@ import {
               _focus={{
                 bg: 'pink.400',
               }}>
-              Batal
+              <Link color='white' href='./Profile'>Batal</Link>
             </Button>
           </Stack>
         </Box>

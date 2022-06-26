@@ -49,10 +49,10 @@ import {
           </VStack>
           <Center>
           <Stack mt={15} direction={'row'} spacing={4}>
-            <Link color='pink.500' href='./Pages/Listbea'>  
+            <Link color='pink.500' href='./Listbea'>  
               Postingan Saya
               </Link>
-              <Link color='pink.500' href='./Pages/editProfile'>
+              <Link color='pink.500' href='./editProfile'>
                 Pengaturan
                 </Link>
             </Stack>
