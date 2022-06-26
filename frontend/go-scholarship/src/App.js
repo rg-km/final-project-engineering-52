@@ -10,6 +10,9 @@ import Detailbea from './Pages/Detailbea'
 import Listbea from './Pages/Listbea'
 import { CreateBeasiswa } from './Pages/CreateBeasiswa';
 import Profile from './Pages/Profile'
+import { RequireAuth } from './Components/ProtectedRoute';
+import Admin from './Pages/Admin'
+
 
 function App() {
   return (
@@ -24,8 +27,11 @@ function App() {
       <Route path="/faq" element={<Faq />}/>
       <Route path="/contact" element={<Contct />}/>
       <Route path="/list-beasiswa" element={<Listbea />}/>
-      <Route path="/beasiswa/create" element={<CreateBeasiswa />}/>
-      <Route path="/profile" element={<Profile />}/>
+      <Route path="/beasiswa/create" element={<RequireAuth><CreateBeasiswa /></RequireAuth> }/>
+      <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth> }/>
+      <Route path="/admin" element={<RequireAuth><Admin /></RequireAuth> }/>
+      
+
     </Routes>
     </div>
   );
