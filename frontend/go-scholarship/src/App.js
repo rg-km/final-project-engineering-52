@@ -9,6 +9,7 @@ import Contct from './Pages/ContactUs';
 import Detailbea from './Pages/Detailbea'
 import Listbea from './Pages/Listbea'
 import Profile from './Pages/Profile'
+import editProfile from './Pages/editProfile'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
       <Route path="/contact" element={<Contct />}/>
       <Route path="/list-beasiswa" element={<Listbea />}/>
       <Route path="/profile" element={<Profile />}/>
+      <Route path="/editprofile" element={<editProfile />}/>
     </Routes>
     </div>
   );

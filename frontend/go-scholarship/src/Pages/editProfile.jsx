@@ -6,19 +6,18 @@ import {
     Stack,
     VStack,
     Button,
-    Stat,
-    StatLabel,
-    StatHelpText,
-    Link,
+    Input,
+    FormControl,
+    FormLabel,
   } from '@chakra-ui/react';
   
-  export default function SocialProfileSimple() {
+  export default function editProfile() {
     return (
       <Center py={6}>
         <Box
           maxW={'320px'}
           w={'full'}
-          bg={'gray.75'}
+          bg={('white', 'gray.900')}
           boxShadow={'2xl'}
           rounded={'lg'}
           p={6}
@@ -33,30 +32,32 @@ import {
             mb={4}
             pos={'relative'}          
           />
-          <VStack justify={'left'}  direction={'row'} mt={6}>
-          <Stat>
-          <StatLabel>Nama Lengkap</StatLabel>
-          <StatHelpText>Jane Doe</StatHelpText>
-          </Stat>
-          <Stat>
-          <StatLabel>Pendidikan</StatLabel>
-          <StatHelpText>Mahasiswa</StatHelpText>
-          </Stat>
-          <Stat>
-          <StatLabel>Email</StatLabel>
-          <StatHelpText>admin@gmail.com</StatHelpText>
-          </Stat>
+          <VStack align={'left'} justify={'left'}  direction={'row'} mt={6}>
+          <FormControl id="NamaLengkap" isRequired>
+          <FormLabel>Nama Lengkap</FormLabel>
+          <Input
+            placeholder="NamaLengkap"
+            _placeholder={{ color: 'gray.500' }}
+            type="text"
+          />
+        </FormControl>
+        <FormControl id="pendidikan" isRequired>
+          <FormLabel>Pendidikan</FormLabel>
+          <Input
+            placeholder="Pendidikan"
+            _placeholder={{ color: 'gray.500' }}
+            type="text"
+          />
+          </FormControl>
+        <FormControl id="email" isRequired>
+          <FormLabel>Email address</FormLabel>
+          <Input
+            placeholder="your-email@example.com"
+            _placeholder={{ color: 'gray.500' }}
+            type="email"
+          />
+          </FormControl>
           </VStack>
-          <Center>
-          <Stack mt={15} direction={'row'} spacing={4}>
-            <Link color='pink.500' href='./Pages/Listbea'>  
-              Postingan Saya
-              </Link>
-              <Link color='pink.500' href='./Pages/editProfile'>
-                Pengaturan
-                </Link>
-            </Stack>
-            </Center>
           <Stack mt={8} direction={'row'} spacing={4}>
           <Button
               flex={1}
@@ -73,7 +74,7 @@ import {
               _focus={{
                 bg: 'pink.400',
               }}>
-              Hapus Akun
+              Simpan
             </Button>
             <Button
               flex={1}
@@ -90,7 +91,7 @@ import {
               _focus={{
                 bg: 'pink.400',
               }}>
-              Keluar
+              Batal
             </Button>
           </Stack>
         </Box>
