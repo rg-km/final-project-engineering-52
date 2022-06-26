@@ -74,9 +74,6 @@ func (u *userHandler) login(c *gin.Context) {
 	// JWT
 	token, _ := token.CreateToken(userLogin.Email, userLogin.Role)
 
-	// debug
-	fmt.Println(c.Request.Header.Get("Authorization"))
-
 	c.JSON(http.StatusOK, gin.H{
 		"message": "user logged in",
 		"token":   token,
