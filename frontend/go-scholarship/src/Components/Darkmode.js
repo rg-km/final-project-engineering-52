@@ -10,6 +10,7 @@ export default function Darkmode(props) {
      */
     <Flex h="100vh" justifyContent="center" alignItems="center">
       <Button
+        padding={'11'}
         aria-label="Toggle Color Mode"
         onClick={toggleColorMode}
         _focus={{ boxShadow: 'none' }}

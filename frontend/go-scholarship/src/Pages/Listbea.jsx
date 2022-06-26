@@ -5,15 +5,9 @@ import {
   Link,
   Image,
   Text,
-  Divider,
   HStack,
   Tag,
-  Wrap,
-  WrapItem,
-  SpaceProps,
-  useColorModeValue,
   Container,
-  VStack,
 } from "@chakra-ui/react";
 import { useScholarship } from "../Database/useScholarship";
 import { useEffect } from "react";
@@ -38,7 +32,7 @@ export const BlogAuthor = (props) => {
       <Image
         borderRadius="full"
         boxSize="40px"
-        src="https://100k-faces.glitch.me/random-image"
+        src={`${props.image}`}
         alt={`Avatar of ${props.name}`}
       />
       <Text fontWeight="medium">{props.name}</Text>
@@ -49,7 +43,7 @@ export const BlogAuthor = (props) => {
 };
 
 const ListBea = () => {
-  const { scolarship, fetch } = useScholarship((s) => s);
+  const { scolarship, fetch } = useScholarship((state) => state);
   useEffect(() => {
     fetch();
   }, []);
@@ -137,7 +131,7 @@ const ListBea = () => {
                   }
                 </Text>
                 {
-                  item?.user?.name && <BlogAuthor name={item?.user?.name} date={new Date(item?.created_at)} />
+                  item?.user?.name && <BlogAuthor image={item?.image.includes("http") ? item?.image : "https://100k-faces.glitch.me/random-image"} name={item?.user?.name} date={new Date(item?.created_at)} />
                 }
                 
               </Box>
