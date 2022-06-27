@@ -20,8 +20,13 @@ export const useScholarship = create(
       },
       delete_data: async (id) => {
         try {
-           await axios.delete(baseUrl + "/api/scholarships/" + id);
+           await axios.delete(baseUrl + "/api/scholarships/" + id,{
+            headers:{
+                'Authorization': localStorage.getItem('token')
+        }})
+           
           const data = Scholarship.filter(item => item.id != id)
+          console.log(data)
           set({
             scolarship: data
           })
