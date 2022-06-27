@@ -98,8 +98,8 @@ function App() {
             </RequireAuth>
           }
         />
-        <Footer />
       </Routes>
+      <Footer />
     </div>
   );
 }
