@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"os"
 
 	"go-scholarship/api/models"
 )
@@ -56,19 +57,18 @@ func (s *scholarConn) FetchById(ctx context.Context, id int64) (models.ScholarRe
 
 // create scholarship
 func (s *scholarConn) Create(ctx context.Context, scholarReq *models.ScholarRequest) (models.ScholarResponse, error) {
-	var scholarResp models.ScholarResponse
 	query := `INSERT INTO scholarships (name, description, image, category_id, user_id) VALUES(?, ?, ?, ?, ?)`
 
 	row, err := s.conn.ExecContext(ctx, query, &scholarReq.Name, &scholarReq.Description, &scholarReq.Image, &scholarReq.CategoryID, &scholarReq.UserID)
 	if err != nil {
-		return scholarResp, err
+		return models.ScholarResponse{}, err
 	}
 
 	lastId, _ := row.LastInsertId()
 
 	res, err := s.FetchById(ctx, lastId)
 	if err != nil {
-		return scholarResp, err
+		return models.ScholarResponse{}, err
 	}
 
 	return res, nil
@@ -76,17 +76,28 @@ func (s *scholarConn) Create(ctx context.Context, scholarReq *models.ScholarRequ
 
 // update scholarship
 func (s *scholarConn) Update(ctx context.Context, id int64, scholarReq *models.ScholarRequest) (models.ScholarResponse, error) {
-	var scholarResp models.ScholarResponse
-	query := `UPDATE scholarships SET name = ?, description = ?, image = ?, category_id = ?, user_id = ? WHERE id  = ?`
-
-	_, err := s.conn.ExecContext(ctx, query, &scholarReq.Name, &scholarReq.Description, &scholarReq.Image, &scholarReq.CategoryID, &scholarReq.UserID, id)
+	scholar, err := s.FetchById(ctx, scholarReq.ID)
 	if err != nil {
-		return scholarResp, err
+		return models.ScholarResponse{}, err
+	}
+
+	// compare image
+	if scholarReq.Image != scholar.Image {
+		if err := os.Remove(scholar.Image); err != nil {
+			return models.ScholarResponse{}, err
+		}
+	}
+
+	query := `UPDATE scholarships SET name = ?, description = ?, image = ?, category_id = ?, user_id = ? WHERE id = ?`
+
+	_, err = s.conn.ExecContext(ctx, query, &scholarReq.Name, &scholarReq.Description, &scholarReq.Image, &scholarReq.CategoryID, &scholarReq.UserID, id)
+	if err != nil {
+		return models.ScholarResponse{}, err
 	}
 
 	res, err := s.FetchById(ctx, id)
 	if err != nil {
-		return scholarResp, err
+		return models.ScholarResponse{}, err
 	}
 
 	return res, nil
@@ -95,13 +106,19 @@ func (s *scholarConn) Update(ctx context.Context, id int64, scholarReq *models.S
 // delete scholarship
 func (s *scholarConn) Delete(ctx context.Context, id int64) error {
 	// check scholar if exist
-	if _, err := s.FetchById(ctx, id); err != nil {
+	user, err := s.FetchById(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	// delete image
+	if err := os.Remove(user.Image); err != nil {
 		return err
 	}
 
 	query := `DELETE FROM scholarships WHERE id = ?`
 
-	_, err := s.conn.ExecContext(ctx, query, id)
+	_, err = s.conn.ExecContext(ctx, query, id)
 	if err != nil {
 		return err
 	}

@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"os"
 
 	"go-scholarship/api/models"
 	"go-scholarship/utils/hash"
@@ -175,6 +176,13 @@ func (u *userConn) Update(ctx context.Context, id int64, user *models.User) (mod
 		user.Password, _ = hash.HashPassword(user.Password)
 	}
 
+	// compare image
+	if usr.Image != user.Image {
+		if err := os.Remove(usr.Image); err != nil {
+			return models.UserResponse{}, err
+		}
+	}
+
 	query := `UPDATE users SET name = ?, image = ?,  email = ?, password = ? WHERE id = ?`
 
 	_, err = u.conn.ExecContext(ctx, query, &user.Name, &user.Image, &user.Email, &user.Password, id)
@@ -193,12 +201,18 @@ func (u *userConn) Update(ctx context.Context, id int64, user *models.User) (mod
 // delete user
 func (u *userConn) Delete(ctx context.Context, id int64) error {
 	// check the user if exists
-	if _, err := u.FetchById(ctx, id); err != nil {
+	user, err := u.FetchById(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	// delete image
+	if err := os.Remove(user.Image); err != nil {
 		return err
 	}
 
 	query := `DELETE FROM users WHERE id = ?`
-	_, err := u.conn.ExecContext(ctx, query, id)
+	_, err = u.conn.ExecContext(ctx, query, id)
 	if err != nil {
 		return err
 	}

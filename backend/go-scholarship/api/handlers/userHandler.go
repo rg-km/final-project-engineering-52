@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"go-scholarship/api"
 	"go-scholarship/api/handlers/middleware"
 	"go-scholarship/api/models"
 	"go-scholarship/utils/token"
@@ -84,21 +85,35 @@ func (u *userHandler) login(c *gin.Context) {
 // register
 func (u *userHandler) register(c *gin.Context) {
 	ctx := c.Request.Context()
-	var user models.User
-
-	if err := c.ShouldBind(&user); err != nil {
-		for _, v := range err.(validator.ValidationErrors) {
-			eM := errMessage(v)
-
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": eM,
-			})
-
-			return
-		}
+	name := c.PostForm("name")
+	email := c.PostForm("email")
+	password := c.PostForm("password")
+	image, err := c.FormFile("image")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": models.BadRequest,
+		})
+		return
 	}
 
-	userData, err := u.userRepo.Register(ctx, &user)
+	// image storage
+	fileDir := api.ImageStorage("users", name, image)
+
+	if err := c.SaveUploadedFile(image, fileDir); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": models.BadRequest,
+		})
+		return
+	}
+
+	user := &models.User{
+		Name:     name,
+		Image:    fileDir,
+		Email:    email,
+		Password: password,
+	}
+
+	userData, err := u.userRepo.Register(ctx, user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.InternalServer,
@@ -106,9 +121,13 @@ func (u *userHandler) register(c *gin.Context) {
 		return
 	}
 
+	// JWT
+	token, _ := token.CreateToken(userData.Email, userData.Role)
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "user registered",
 		"data":    userData,
+		"token":   token,
 	})
 }
 
@@ -172,21 +191,35 @@ func (u *userHandler) fetchById(c *gin.Context) {
 // create user
 func (u *userHandler) create(c *gin.Context) {
 	ctx := c.Request.Context()
-	var user models.User
-
-	if err := c.ShouldBind(&user); err != nil {
-		for _, v := range err.(validator.ValidationErrors) {
-			eM := errMessage(v)
-
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": eM,
-			})
-
-			return
-		}
+	name := c.PostForm("name")
+	email := c.PostForm("email")
+	password := c.PostForm("password")
+	image, err := c.FormFile("image")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": models.BadRequest,
+		})
+		return
 	}
 
-	userData, err := u.userRepo.Create(ctx, &user)
+	// image storage
+	fileDir := api.ImageStorage("users", name, image)
+
+	if err := c.SaveUploadedFile(image, fileDir); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": models.BadRequest,
+		})
+		return
+	}
+
+	user := &models.User{
+		Name:     name,
+		Image:    fileDir,
+		Email:    email,
+		Password: password,
+	}
+
+	userData, err := u.userRepo.Create(ctx, user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.InternalServer,
@@ -204,29 +237,36 @@ func (u *userHandler) create(c *gin.Context) {
 func (u *userHandler) update(c *gin.Context) {
 	ctx := c.Request.Context()
 	id := c.Param("id")
-	idConv, err := strconv.Atoi(id)
+	idConv, _ := strconv.Atoi(id)
+	name := c.PostForm("name")
+	email := c.PostForm("email")
+	password := c.PostForm("password")
+	image, err := c.FormFile("image")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.BadRequest,
 		})
 		return
 	}
 
-	var user models.User
+	// image storage
+	fileDir := api.ImageStorage("users", name, image)
 
-	if err := c.ShouldBind(&user); err != nil {
-		for _, v := range err.(validator.ValidationErrors) {
-			eM := errMessage(v)
-
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": eM,
-			})
-
-			return
-		}
+	if err := c.SaveUploadedFile(image, fileDir); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": models.BadRequest,
+		})
+		return
 	}
 
-	userData, err := u.userRepo.Update(ctx, int64(idConv), &user)
+	user := &models.User{
+		Name:     name,
+		Image:    fileDir,
+		Email:    email,
+		Password: password,
+	}
+
+	userData, err := u.userRepo.Update(ctx, int64(idConv), user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.InternalServer,
