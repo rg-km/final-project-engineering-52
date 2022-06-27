@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"os"
 
 	"go-scholarship/api/models"
 )
@@ -76,16 +75,9 @@ func (s *scholarConn) Create(ctx context.Context, scholarReq *models.ScholarRequ
 
 // update scholarship
 func (s *scholarConn) Update(ctx context.Context, id int64, scholarReq *models.ScholarRequest) (models.ScholarResponse, error) {
-	scholar, err := s.FetchById(ctx, scholarReq.ID)
+	_, err := s.FetchById(ctx, scholarReq.ID)
 	if err != nil {
 		return models.ScholarResponse{}, err
-	}
-
-	// compare image
-	if scholarReq.Image != scholar.Image {
-		if err := os.Remove(scholar.Image); err != nil {
-			return models.ScholarResponse{}, err
-		}
 	}
 
 	query := `UPDATE scholarships SET name = ?, description = ?, image = ?, category_id = ?, user_id = ? WHERE id = ?`
@@ -106,13 +98,8 @@ func (s *scholarConn) Update(ctx context.Context, id int64, scholarReq *models.S
 // delete scholarship
 func (s *scholarConn) Delete(ctx context.Context, id int64) error {
 	// check scholar if exist
-	user, err := s.FetchById(ctx, id)
+	_, err := s.FetchById(ctx, id)
 	if err != nil {
-		return err
-	}
-
-	// delete image
-	if err := os.Remove(user.Image); err != nil {
 		return err
 	}
 

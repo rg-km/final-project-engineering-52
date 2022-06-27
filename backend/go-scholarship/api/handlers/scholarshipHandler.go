@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"go-scholarship/api"
 	"go-scholarship/api/handlers/middleware"
 	"go-scholarship/api/models"
 
@@ -77,39 +76,16 @@ func (s *scholarHandler) fetchById(c *gin.Context) {
 // create scholarship
 func (s *scholarHandler) create(c *gin.Context) {
 	ctx := c.Request.Context()
-	name := c.PostForm("name")
-	desc := c.PostForm("description")
-	category := c.PostForm("category_id")
-	categoryId, _ := strconv.Atoi(category)
-	user := c.PostForm("user_id")
-	userId, _ := strconv.Atoi(user)
-	image, err := c.FormFile("image")
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+	scholar := models.ScholarRequest{}
+
+	if err := c.ShouldBind(&scholar); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
 			"message": models.BadRequest,
 		})
 		return
 	}
 
-	// image storage
-	fileDir := api.ImageStorage("scholarships", name, image)
-
-	if err := c.SaveUploadedFile(image, fileDir); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": models.BadRequest,
-		})
-		return
-	}
-
-	scholar := &models.ScholarRequest{
-		Name:        name,
-		Description: desc,
-		Image:       fileDir,
-		CategoryID:  int64(categoryId),
-		UserID:      int64(userId),
-	}
-
-	res, err := s.scholarUseCase.Create(ctx, scholar)
+	res, err := s.scholarUseCase.Create(ctx, &scholar)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.InternalServer,
@@ -128,39 +104,16 @@ func (s *scholarHandler) update(c *gin.Context) {
 	ctx := c.Request.Context()
 	id := c.Param("id")
 	idConv, _ := strconv.Atoi(id)
-	name := c.PostForm("name")
-	desc := c.PostForm("description")
-	category := c.PostForm("category_id")
-	categoryId, _ := strconv.Atoi(category)
-	user := c.PostForm("user_id")
-	userId, _ := strconv.Atoi(user)
-	image, err := c.FormFile("image")
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+	scholar := models.ScholarRequest{}
+
+	if err := c.ShouldBind(&scholar); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
 			"message": models.BadRequest,
 		})
 		return
 	}
 
-	// image storage
-	fileDir := api.ImageStorage("scholarships", name, image)
-
-	if err := c.SaveUploadedFile(image, fileDir); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": models.BadRequest,
-		})
-		return
-	}
-
-	scholar := &models.ScholarRequest{
-		Name:        name,
-		Description: desc,
-		Image:       fileDir,
-		CategoryID:  int64(categoryId),
-		UserID:      int64(userId),
-	}
-
-	res, err := s.scholarUseCase.Update(ctx, int64(idConv), scholar)
+	res, err := s.scholarUseCase.Update(ctx, int64(idConv), &scholar)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.InternalServer,

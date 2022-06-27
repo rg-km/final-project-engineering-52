@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"go-scholarship/api"
 	"go-scholarship/api/handlers/middleware"
 	"go-scholarship/api/models"
 	"go-scholarship/utils/token"
@@ -85,37 +84,16 @@ func (u *userHandler) login(c *gin.Context) {
 // register
 func (u *userHandler) register(c *gin.Context) {
 	ctx := c.Request.Context()
-	name := c.PostForm("name")
-	pendidikan := c.PostForm("pendidikan")
-	email := c.PostForm("email")
-	password := c.PostForm("password")
-	image, err := c.FormFile("image")
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+	user := models.User{}
+
+	if err := c.ShouldBind(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
 			"message": models.BadRequest,
 		})
 		return
 	}
 
-	// image storage
-	fileDir := api.ImageStorage("users", name, image)
-
-	if err := c.SaveUploadedFile(image, fileDir); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": models.BadRequest,
-		})
-		return
-	}
-
-	user := &models.User{
-		Name:       name,
-		Pendidikan: pendidikan,
-		Image:      fileDir,
-		Email:      email,
-		Password:   password,
-	}
-
-	userData, err := u.userRepo.Register(ctx, user)
+	userData, err := u.userRepo.Register(ctx, &user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.InternalServer,
@@ -193,37 +171,16 @@ func (u *userHandler) fetchById(c *gin.Context) {
 // create user
 func (u *userHandler) create(c *gin.Context) {
 	ctx := c.Request.Context()
-	name := c.PostForm("name")
-	pendidikan := c.PostForm("pendidikan")
-	email := c.PostForm("email")
-	password := c.PostForm("password")
-	image, err := c.FormFile("image")
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+	user := models.User{}
+
+	if err := c.ShouldBind(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
 			"message": models.BadRequest,
 		})
 		return
 	}
 
-	// image storage
-	fileDir := api.ImageStorage("users", name, image)
-
-	if err := c.SaveUploadedFile(image, fileDir); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": models.BadRequest,
-		})
-		return
-	}
-
-	user := &models.User{
-		Name:       name,
-		Pendidikan: pendidikan,
-		Image:      fileDir,
-		Email:      email,
-		Password:   password,
-	}
-
-	userData, err := u.userRepo.Create(ctx, user)
+	userData, err := u.userRepo.Create(ctx, &user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.InternalServer,
@@ -242,37 +199,16 @@ func (u *userHandler) update(c *gin.Context) {
 	ctx := c.Request.Context()
 	id := c.Param("id")
 	idConv, _ := strconv.Atoi(id)
-	name := c.PostForm("name")
-	pendidikan := c.PostForm("pendidikan")
-	email := c.PostForm("email")
-	password := c.PostForm("password")
-	image, err := c.FormFile("image")
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+	user := models.User{}
+
+	if err := c.ShouldBind(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
 			"message": models.BadRequest,
 		})
 		return
 	}
 
-	// image storage
-	fileDir := api.ImageStorage("users", name, image)
-
-	if err := c.SaveUploadedFile(image, fileDir); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": models.BadRequest,
-		})
-		return
-	}
-
-	user := &models.User{
-		Name:       name,
-		Pendidikan: pendidikan,
-		Image:      fileDir,
-		Email:      email,
-		Password:   password,
-	}
-
-	userData, err := u.userRepo.Update(ctx, int64(idConv), user)
+	userData, err := u.userRepo.Update(ctx, int64(idConv), &user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": models.InternalServer,

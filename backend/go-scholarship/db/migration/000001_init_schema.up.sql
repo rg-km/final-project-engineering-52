@@ -1,7 +1,6 @@
 CREATE TABLE users(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR NOT NULL,
-    pendidikan VARCHAR DEFAULT '',
     image VARCHAR DEFAULT 'image.jpg',
     email VARCHAR NOT NULL,
     password VARCHAR NOT NULL,
