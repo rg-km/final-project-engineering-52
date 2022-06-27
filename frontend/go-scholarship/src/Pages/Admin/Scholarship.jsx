@@ -42,7 +42,7 @@ function Scholarship(){
       <Td>{item?.description}</Td>
       <Td>{item?.category?.category_name}</Td>
       <Td>{item?.user?.name}</Td>
-      <Td><Button>Edit</Button>&nbsp;&nbsp;<Button onClick={() => delete(item?.id)}>Delete</Button></Td>
+      <Td><Button>Edit</Button>&nbsp;&nbsp;<Button onClick={() => delete_data(item?.id)}>Delete</Button></Td>
       
     </Tr>
   ))}
