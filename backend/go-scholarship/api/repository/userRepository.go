@@ -22,7 +22,7 @@ func (repo *userConn) fetchUserByEmail(ctx context.Context, email string) (model
 	var u models.User
 	sqlStmt := `SELECT * FROM users WHERE email = ?`
 	row := repo.conn.QueryRow(sqlStmt, email)
-	err := row.Scan(&u.ID, &u.Name, &u.Image, &u.Email, &u.Password, &u.Role, &u.CreatedAt)
+	err := row.Scan(&u.ID, &u.Name, &u.Pendidikan, &u.Image, &u.Email, &u.Password, &u.Role, &u.CreatedAt)
 	if err != nil {
 		return u, err
 	}
@@ -35,7 +35,7 @@ func (u *userConn) fetchById(ctx context.Context, id int64) (models.User, error)
 	var user models.User
 	sqlStmt := `SELECT * FROM users WHERE id = ?`
 	row := u.conn.QueryRowContext(ctx, sqlStmt, id)
-	err := row.Scan(&user.ID, &user.Name, &user.Image, &user.Email, &user.Password, &user.Role, &user.CreatedAt)
+	err := row.Scan(&user.ID, &user.Name, &user.Pendidikan, &user.Image, &user.Email, &user.Password, &user.Role, &user.CreatedAt)
 	if err != nil {
 		return models.User{}, err
 	}
@@ -90,7 +90,7 @@ func (u *userConn) Fetch(ctx context.Context) ([]models.UserResponse, error) {
 	var users []models.UserResponse
 	for rows.Next() {
 		var user models.User
-		err = rows.Scan(&user.ID, &user.Name, &user.Image, &user.Email, &user.Password, &user.Role, &user.CreatedAt)
+		err = rows.Scan(&user.ID, &user.Name, &user.Pendidikan, &user.Image, &user.Email, &user.Password, &user.Role, &user.CreatedAt)
 		if err != nil {
 			return []models.UserResponse{}, err
 		}
@@ -115,18 +115,19 @@ func (u *userConn) FetchById(ctx context.Context, id int64) (models.UserResponse
 	var user models.User
 	sqlStmt := `SELECT * FROM users WHERE id = ?`
 	row := u.conn.QueryRowContext(ctx, sqlStmt, id)
-	err := row.Scan(&user.ID, &user.Name, &user.Image, &user.Email, &user.Password, &user.Role, &user.CreatedAt)
+	err := row.Scan(&user.ID, &user.Name, &user.Pendidikan, &user.Image, &user.Email, &user.Password, &user.Role, &user.CreatedAt)
 	if err != nil {
 		return models.UserResponse{}, err
 	}
 
 	userResponse := &models.UserResponse{
-		ID:        user.ID,
-		Name:      user.Name,
-		Image:     user.Image,
-		Email:     user.Email,
-		Role:      user.Role,
-		CreatedAt: user.CreatedAt,
+		ID:         user.ID,
+		Name:       user.Name,
+		Pendidikan: user.Pendidikan,
+		Image:      user.Image,
+		Email:      user.Email,
+		Role:       user.Role,
+		CreatedAt:  user.CreatedAt,
 	}
 
 	return *userResponse, nil
@@ -137,9 +138,9 @@ func (u *userConn) Create(ctx context.Context, user *models.User) (models.UserRe
 	// hash password
 	user.Password, _ = hash.HashPassword(user.Password)
 
-	query := `INSERT INTO users (name, image, email, password) VALUES(?, ?, ?, ?)`
+	query := `INSERT INTO users (name, pendidikan, image, email, password) VALUES(?, ?, ?, ?, ?)`
 
-	row, err := u.conn.ExecContext(ctx, query, &user.Name, &user.Image, &user.Email, &user.Password)
+	row, err := u.conn.ExecContext(ctx, query, &user.Name, &user.Pendidikan, &user.Image, &user.Email, &user.Password)
 	if err != nil {
 		return models.UserResponse{}, err
 	}
@@ -152,12 +153,13 @@ func (u *userConn) Create(ctx context.Context, user *models.User) (models.UserRe
 	}
 
 	userResponse := &models.UserResponse{
-		ID:        res.ID,
-		Name:      res.Name,
-		Image:     res.Image,
-		Email:     res.Email,
-		Role:      res.Role,
-		CreatedAt: res.CreatedAt,
+		ID:         res.ID,
+		Name:       res.Name,
+		Pendidikan: res.Pendidikan,
+		Image:      res.Image,
+		Email:      res.Email,
+		Role:       res.Role,
+		CreatedAt:  res.CreatedAt,
 	}
 
 	return *userResponse, nil
@@ -183,9 +185,9 @@ func (u *userConn) Update(ctx context.Context, id int64, user *models.User) (mod
 		}
 	}
 
-	query := `UPDATE users SET name = ?, image = ?,  email = ?, password = ? WHERE id = ?`
+	query := `UPDATE users SET name = ?, pendidikan = ?, image = ?,  email = ?, password = ? WHERE id = ?`
 
-	_, err = u.conn.ExecContext(ctx, query, &user.Name, &user.Image, &user.Email, &user.Password, id)
+	_, err = u.conn.ExecContext(ctx, query, &user.Name, &user.Pendidikan, &user.Image, &user.Email, &user.Password, id)
 	if err != nil {
 		return models.UserResponse{}, err
 	}

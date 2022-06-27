@@ -86,6 +86,7 @@ func (u *userHandler) login(c *gin.Context) {
 func (u *userHandler) register(c *gin.Context) {
 	ctx := c.Request.Context()
 	name := c.PostForm("name")
+	pendidikan := c.PostForm("pendidikan")
 	email := c.PostForm("email")
 	password := c.PostForm("password")
 	image, err := c.FormFile("image")
@@ -107,10 +108,11 @@ func (u *userHandler) register(c *gin.Context) {
 	}
 
 	user := &models.User{
-		Name:     name,
-		Image:    fileDir,
-		Email:    email,
-		Password: password,
+		Name:       name,
+		Pendidikan: pendidikan,
+		Image:      fileDir,
+		Email:      email,
+		Password:   password,
 	}
 
 	userData, err := u.userRepo.Register(ctx, user)
@@ -192,6 +194,7 @@ func (u *userHandler) fetchById(c *gin.Context) {
 func (u *userHandler) create(c *gin.Context) {
 	ctx := c.Request.Context()
 	name := c.PostForm("name")
+	pendidikan := c.PostForm("pendidikan")
 	email := c.PostForm("email")
 	password := c.PostForm("password")
 	image, err := c.FormFile("image")
@@ -213,10 +216,11 @@ func (u *userHandler) create(c *gin.Context) {
 	}
 
 	user := &models.User{
-		Name:     name,
-		Image:    fileDir,
-		Email:    email,
-		Password: password,
+		Name:       name,
+		Pendidikan: pendidikan,
+		Image:      fileDir,
+		Email:      email,
+		Password:   password,
 	}
 
 	userData, err := u.userRepo.Create(ctx, user)
@@ -239,6 +243,7 @@ func (u *userHandler) update(c *gin.Context) {
 	id := c.Param("id")
 	idConv, _ := strconv.Atoi(id)
 	name := c.PostForm("name")
+	pendidikan := c.PostForm("pendidikan")
 	email := c.PostForm("email")
 	password := c.PostForm("password")
 	image, err := c.FormFile("image")
@@ -260,10 +265,11 @@ func (u *userHandler) update(c *gin.Context) {
 	}
 
 	user := &models.User{
-		Name:     name,
-		Image:    fileDir,
-		Email:    email,
-		Password: password,
+		Name:       name,
+		Pendidikan: pendidikan,
+		Image:      fileDir,
+		Email:      email,
+		Password:   password,
 	}
 
 	userData, err := u.userRepo.Update(ctx, int64(idConv), user)
@@ -295,7 +301,7 @@ func (u *userHandler) delete(c *gin.Context) {
 
 	if err := u.userRepo.Delete(ctx, int64(idConv)); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": models.InternalServer,
+			"message": models.ItemNotFound,
 		})
 		return
 	}
