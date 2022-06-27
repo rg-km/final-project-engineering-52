@@ -51,7 +51,9 @@ func main() {
 	// seeding
 	arguments(db)
 
-	r := gin.New()
+	r := gin.Default()
+
+	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 
 	// middleware
 	m := middleware.InitMiddleware()
