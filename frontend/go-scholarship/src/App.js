@@ -18,6 +18,7 @@ import Comment from "./Pages/Admin/Comment";
 import User from "./Pages/Admin/User";
 import Footer from "./Components/Footer";
 import Editprof from './Pages/Editprof'
+import NotFound from "./Pages/404";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
       <NavbarApp />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="*" element={<NotFound/>} />
         <Route path="/detailbea" element={<Detailbea />} />
         <Route path="/listbea" element={<Listbea />} />
         <Route path="/login" element={<Login />} />
@@ -33,6 +35,7 @@ function App() {
         <Route path="/contact" element={<Contct />} />
         <Route path="/list-beasiswa" element={<Listbea />} />
         <Route path="/editprofile" element={<Editprof />}/>
+        
         <Route
           path="/beasiswa/create"
           element={
