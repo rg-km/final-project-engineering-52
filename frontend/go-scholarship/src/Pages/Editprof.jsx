@@ -6,16 +6,13 @@ import {
     Stack,
     VStack,
     Button,
-    Stat,
-    StatLabel,
-    StatHelpText,
+    Input,
+    FormControl,
+    FormLabel,
     Link,
   } from '@chakra-ui/react';
-import { useAuth } from '../Database/useAuth';
   
-  export default function SocialProfileSimple() {
-    const {user} = useAuth(s => s)
-    
+  export default function Editprof() {
     return (
       <Center py={6}>
         <Box
@@ -36,30 +33,32 @@ import { useAuth } from '../Database/useAuth';
             mb={4}
             pos={'relative'}          
           />
-          <VStack justify={'left'}  direction={'row'} mt={6}>
-          <Stat>
-          <StatLabel>Nama Lengkap</StatLabel>
-          <StatHelpText>{user?.name} </StatHelpText>
-          </Stat>
-          <Stat>
-          <StatLabel>Pendidikan</StatLabel>
-          <StatHelpText>SMA</StatHelpText>
-          </Stat>
-          <Stat>
-          <StatLabel>Email</StatLabel>
-          <StatHelpText>{user?.email}</StatHelpText>
-          </Stat>
+          <VStack align={'left'} justify={'left'}  direction={'row'} mt={6}>
+          <FormControl id="NamaLengkap" isRequired>
+          <FormLabel>Nama Lengkap</FormLabel>
+          <Input
+            placeholder="NamaLengkap"
+            _placeholder={{ color: 'gray.500' }}
+            type="text"
+          />
+        </FormControl>
+        <FormControl id="pendidikan" isRequired>
+          <FormLabel>Pendidikan</FormLabel>
+          <Input
+            placeholder="Pendidikan"
+            _placeholder={{ color: 'gray.500' }}
+            type="text"
+          />
+          </FormControl>
+        <FormControl id="email" isRequired>
+          <FormLabel>Email address</FormLabel>
+          <Input
+            placeholder="your-email@example.com"
+            _placeholder={{ color: 'gray.500' }}
+            type="email"
+          />
+          </FormControl>
           </VStack>
-          <Center>
-          <Stack mt={15} direction={'row'} spacing={4}>
-            <Link color='pink.500' href='./Listbea'>  
-              Postingan Saya
-              </Link>
-              <Link color='pink.500' href='./editProfile'>
-                Pengaturan
-                </Link>
-            </Stack>
-            </Center>
           <Stack mt={8} direction={'row'} spacing={4}>
           <Button
               flex={1}
@@ -76,7 +75,7 @@ import { useAuth } from '../Database/useAuth';
               _focus={{
                 bg: 'pink.400',
               }}>
-              Hapus Akun
+              Simpan
             </Button>
             <Button
               flex={1}
@@ -93,7 +92,7 @@ import { useAuth } from '../Database/useAuth';
               _focus={{
                 bg: 'pink.400',
               }}>
-              Keluar
+              <Link color='white' href='./Profile'>Batal</Link>
             </Button>
           </Stack>
         </Box>

@@ -17,6 +17,7 @@ import Category from "./Pages/Admin/Category";
 import Comment from "./Pages/Admin/Comment";
 import User from "./Pages/Admin/User";
 import Footer from "./Components/Footer";
+import Editprof from './Pages/Editprof'
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/faq" element={<Faq />} />
         <Route path="/contact" element={<Contct />} />
         <Route path="/list-beasiswa" element={<Listbea />} />
+        <Route path="/editprofile" element={<Editprof />}/>
         <Route
           path="/beasiswa/create"
           element={
