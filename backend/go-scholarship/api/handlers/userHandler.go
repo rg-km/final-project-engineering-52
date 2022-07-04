@@ -74,9 +74,6 @@ func (u *userHandler) login(c *gin.Context) {
 	// JWT
 	token, _ := token.CreateToken(userLogin.Email, userLogin.Role)
 
-	// debug
-	fmt.Println(c.Request.Header.Get("Authorization"))
-
 	c.JSON(http.StatusOK, gin.H{
 		"message": "user logged in",
 		"token":   token,
@@ -87,18 +84,13 @@ func (u *userHandler) login(c *gin.Context) {
 // register
 func (u *userHandler) register(c *gin.Context) {
 	ctx := c.Request.Context()
-	var user models.User
+	user := models.User{}
 
 	if err := c.ShouldBind(&user); err != nil {
-		for _, v := range err.(validator.ValidationErrors) {
-			eM := errMessage(v)
-
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": eM,
-			})
-
-			return
-		}
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": models.BadRequest,
+		})
+		return
 	}
 
 	userData, err := u.userRepo.Register(ctx, &user)
@@ -109,9 +101,13 @@ func (u *userHandler) register(c *gin.Context) {
 		return
 	}
 
+	// JWT
+	token, _ := token.CreateToken(userData.Email, userData.Role)
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "user registered",
 		"data":    userData,
+		"token":   token,
 	})
 }
 
@@ -175,18 +171,13 @@ func (u *userHandler) fetchById(c *gin.Context) {
 // create user
 func (u *userHandler) create(c *gin.Context) {
 	ctx := c.Request.Context()
-	var user models.User
+	user := models.User{}
 
 	if err := c.ShouldBind(&user); err != nil {
-		for _, v := range err.(validator.ValidationErrors) {
-			eM := errMessage(v)
-
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": eM,
-			})
-
-			return
-		}
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": models.BadRequest,
+		})
+		return
 	}
 
 	userData, err := u.userRepo.Create(ctx, &user)
@@ -207,26 +198,14 @@ func (u *userHandler) create(c *gin.Context) {
 func (u *userHandler) update(c *gin.Context) {
 	ctx := c.Request.Context()
 	id := c.Param("id")
-	idConv, err := strconv.Atoi(id)
-	if err != nil {
+	idConv, _ := strconv.Atoi(id)
+	user := models.User{}
+
+	if err := c.ShouldBind(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": models.BadRequest,
 		})
 		return
-	}
-
-	var user models.User
-
-	if err := c.ShouldBind(&user); err != nil {
-		for _, v := range err.(validator.ValidationErrors) {
-			eM := errMessage(v)
-
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": eM,
-			})
-
-			return
-		}
 	}
 
 	userData, err := u.userRepo.Update(ctx, int64(idConv), &user)
@@ -258,7 +237,7 @@ func (u *userHandler) delete(c *gin.Context) {
 
 	if err := u.userRepo.Delete(ctx, int64(idConv)); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": models.InternalServer,
+			"message": models.ItemNotFound,
 		})
 		return
 	}

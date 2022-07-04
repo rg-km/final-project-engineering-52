@@ -193,12 +193,13 @@ func (u *userConn) Update(ctx context.Context, id int64, user *models.User) (mod
 // delete user
 func (u *userConn) Delete(ctx context.Context, id int64) error {
 	// check the user if exists
-	if _, err := u.FetchById(ctx, id); err != nil {
+	_, err := u.FetchById(ctx, id)
+	if err != nil {
 		return err
 	}
 
 	query := `DELETE FROM users WHERE id = ?`
-	_, err := u.conn.ExecContext(ctx, query, id)
+	_, err = u.conn.ExecContext(ctx, query, id)
 	if err != nil {
 		return err
 	}

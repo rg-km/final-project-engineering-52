@@ -19,6 +19,21 @@ export const useAuth = create(
           console.log(error);
         }
       },
+      register: async (user, navigate) => {
+        try {
+          const { data } = await axios.post(baseUrl + "/register", user,{
+            headers:{"Content-Type": "multipart/form-data" }
+          });
+          set({
+            user: data.data,
+          });
+          localStorage.setItem("token", data.token);
+          navigate("/");
+        } catch (error) {
+          console.log(error);
+        }
+      },
+     
       doLogout: (navigate) => {
         localStorage.removeItem("token");
         set({ user: {} });

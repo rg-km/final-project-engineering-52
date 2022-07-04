@@ -11,8 +11,11 @@ import {
     StatHelpText,
     Link,
   } from '@chakra-ui/react';
+import { useAuth } from '../Database/useAuth';
   
   export default function SocialProfileSimple() {
+    const {user} = useAuth(s => s)
+    
     return (
       <Center py={6}>
         <Box
@@ -36,15 +39,15 @@ import {
           <VStack justify={'left'}  direction={'row'} mt={6}>
           <Stat>
           <StatLabel>Nama Lengkap</StatLabel>
-          <StatHelpText>Jane Doe</StatHelpText>
+          <StatHelpText>{user?.name} </StatHelpText>
           </Stat>
           <Stat>
           <StatLabel>Pendidikan</StatLabel>
-          <StatHelpText>Mahasiswa</StatHelpText>
+          <StatHelpText>SMA</StatHelpText>
           </Stat>
           <Stat>
           <StatLabel>Email</StatLabel>
-          <StatHelpText>admin@gmail.com</StatHelpText>
+          <StatHelpText>{user?.email}</StatHelpText>
           </Stat>
           </VStack>
           <Center>

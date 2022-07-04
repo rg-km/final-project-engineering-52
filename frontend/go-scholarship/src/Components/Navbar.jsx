@@ -23,11 +23,13 @@ import {
 } from "@chakra-ui/icons";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../Database/useAuth";
+import Darkmode from "./Darkmode";
+import { MdBook, MdPerson } from "react-icons/md";
 
 const NAV_ITEMS = [
   {
     label: "Beasiswa",
-      href: "/",
+      href: "/list-beasiswa",
   },
   {
     label: "Contact",
@@ -36,6 +38,10 @@ const NAV_ITEMS = [
   {
     label: "FAQ",
     href: "/faq",
+  },
+  {
+    label: "Admin",
+    href: "/admin",
   },
 ];
 
@@ -46,8 +52,8 @@ export default function NavbarApp() {
   return (
     <Box>
       <Flex
-        bg={useColorModeValue("white", "gray.800")}
-        color={useColorModeValue("gray.600", "white")}
+        bg={useColorModeValue("#F2789F", "black.800")}
+        color={useColorModeValue("black.600", "white")}
         minH={"60px"}
         py={{ base: 2 }}
         px={{ base: 4 }}
@@ -81,27 +87,27 @@ export default function NavbarApp() {
           >
             GO-SCHOLARSHIP
           </Text>
-          {/* <img src={'/logo.png'} align={useBreakpointValue({ base: 'center', md: 'left' })} onClick={() => {
-                navigate('/')
-              }} alt={'logo'} width={'100px'} /> */}
-
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
             <DesktopNav />
+           
           </Flex>
         </Flex>
-              <Button>
-                <DarkMode />
-              </Button>
         <Stack
           flex={{ base: 1, md: 0 }}
           justify={"flex-end"}
           direction={"row"}
           spacing={6}
         >
+          <Button width={'10'}>
+          <Darkmode/>
+          </Button>
+         
           {/* hilangkan ketika login */}
           {JSON.stringify(user) === '{}' ? (
             <>
             <Button
+            color={"white"}
+            textDecoration={"none"}
             onClick={() => {
               navigate("/login");
             }}
@@ -128,6 +134,12 @@ export default function NavbarApp() {
           </Button>
           </>
           ) : (
+            <>
+            <Button
+             
+             width={'10'} onClick={() => navigate('/profile')}>
+            <Icon as={MdPerson}></Icon>
+            </Button>
             <Button
             display={{ base: "none", md: "inline-flex" }}
             fontSize={"sm"}
@@ -143,6 +155,7 @@ export default function NavbarApp() {
           >
             Logout
           </Button>
+            </>
           )}
           
         </Stack>
@@ -159,11 +172,12 @@ const DesktopNav = () => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
+  const {user} = useAuth (s => s)
 
   return (
     <Stack direction={"row"} spacing={4}>
       {NAV_ITEMS.map((navItem) => (
-        <Box key={navItem.label}>
+        <Box key={navItem.label}> 
           <Popover trigger={"hover"} placement={"bottom-start"}>
             <PopoverTrigger>
               <Link

@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"strconv"
 
+	"go-scholarship/api/handlers/middleware"
 	"go-scholarship/api/models"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type scholarHandler struct {
@@ -19,13 +19,19 @@ func NewScholarshipHandler(r *gin.Engine, scholarUseCase models.ScholarshipUseCa
 	handler := &scholarHandler{
 		scholarUseCase: scholarUseCase,
 	}
-	
+
+	// middleware
+	m := middleware.InitMiddleware()
+	auth := r.Group("/api").Use(m.JWTMiddleware())
+	{
+		auth.POST("/scholarships", handler.create)
+		auth.PUT("/scholarships/:id", handler.update)
+		auth.DELETE("/scholarships/:id", handler.delete)
+	}
+
 	// define routes
 	r.GET("/api/scholarships", handler.fetch)
 	r.GET("/api/scholarships/:id", handler.fetchById)
-	r.POST("/api/scholarships", handler.create)
-	r.PUT("/api/scholarships/:id", handler.update)
-	r.DELETE("/api/scholarships/:id", handler.delete)
 }
 
 // fetch all scholarships
@@ -73,15 +79,10 @@ func (s *scholarHandler) create(c *gin.Context) {
 	scholar := models.ScholarRequest{}
 
 	if err := c.ShouldBind(&scholar); err != nil {
-		for _, v := range err.(validator.ValidationErrors) {
-			eM := errMessage(v)
-
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": eM,
-			})
-
-			return
-		}
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": models.BadRequest,
+		})
+		return
 	}
 
 	res, err := s.scholarUseCase.Create(ctx, &scholar)
@@ -101,20 +102,15 @@ func (s *scholarHandler) create(c *gin.Context) {
 // update scholarship
 func (s *scholarHandler) update(c *gin.Context) {
 	ctx := c.Request.Context()
-	scholar := models.ScholarRequest{}
 	id := c.Param("id")
 	idConv, _ := strconv.Atoi(id)
+	scholar := models.ScholarRequest{}
 
 	if err := c.ShouldBind(&scholar); err != nil {
-		for _, v := range err.(validator.ValidationErrors) {
-			eM := errMessage(v)
-
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": eM,
-			})
-
-			return
-		}
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": models.BadRequest,
+		})
+		return
 	}
 
 	res, err := s.scholarUseCase.Update(ctx, int64(idConv), &scholar)
